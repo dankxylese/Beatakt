@@ -1,124 +1,83 @@
 package com.darkxylese.beatakt.screen
 
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.utils.TimeUtils
-import com.darkxylese.beatakt.Game
+import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.assets.AssetManager
 import com.darkxylese.beatakt.assets.MusicAssets
-import com.darkxylese.beatakt.assets.SoundAssets
 import com.darkxylese.beatakt.assets.TextureAtlasAssets
 import com.darkxylese.beatakt.assets.get
-import ktx.assets.pool
+import com.darkxylese.beatakt.ecs.component.HitboxComponent
+import com.darkxylese.beatakt.ecs.component.MoveComponent
+import com.darkxylese.beatakt.ecs.component.RenderComponent
+import com.darkxylese.beatakt.ecs.component.TransformComponent
+import com.darkxylese.beatakt.ecs.system.CollisionSystem
+import com.darkxylese.beatakt.ecs.system.MoveSystem
+import com.darkxylese.beatakt.ecs.system.RenderSystem
+import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import ktx.app.KtxScreen
-import ktx.assets.invoke
-import ktx.collections.iterate
-import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
+import ktx.ashley.entity
+import ktx.ashley.with
+import ktx.ashley.get
 
 private val log = logger<GameScreen>()
 
-class GameScreen(val game: Game) : KtxScreen {
+class GameScreen(private val batch: Batch,
+                 private val font: BitmapFont,
+                 private val assets: AssetManager,
+                 private val camera: OrthographicCamera,
+                 private val engine: PooledEngine) : KtxScreen {
 
-    // load the image for bit blocks, 128x128 pixels
-    private val hitImage = game.assets[TextureAtlasAssets.Game].findRegion("hit")
-    // load the hit sound effect and the audio background music TODO: change this to track song position / manage it elsewhere
-    private val hitSound = game.assets[SoundAssets.Hit]
-    private val testAudio = game.assets[MusicAssets.Song]
-    // The camera ensures we can render using our target resolution of 720x1280
-    //    pixels no matter what the screen resolution is.
-    private val camera = OrthographicCamera().apply { setToOrtho(false, 720f, 1280f) }
-    // create Rectangle will logically represent our touch area
-    // center the touch horizontally, locked 20px on the bottom screen
-    // all for now. Later track touch coordinates and do logic
-    private val oneTouch = Rectangle(720f / 2f - 64f / 2f, 20f, 64f, 64f)
-    // create the touchPos to store mouse click position for desktop
+    private val hitbox = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(720f / 2f - 128f / 2f, 20f, 128f, 128f) }
+        with<MoveComponent>()
+        with<RenderComponent>()
+    }
+
+    // create the touchPos to store mouse click position
     private val touchPos = Vector3()
-    // create the hitBlocks array and spawn the first hitBlock
-    private val hitBlockPool = pool { Rectangle() } // pool to reuse raindrop rectangles
-    private val activeHitBlocks = Array<Rectangle>() // gdx, not Kotlin Array
-    private val dropRate = 6
-    private var lastDropTime = 0L
-    private var accurateHits = 0
-
-    private fun spawnRaindrop() {
-        activeHitBlocks.add(hitBlockPool().set(MathUtils.random(0f, 720f - 64f), 1280f, 64f, 64f))
-        lastDropTime = TimeUtils.nanoTime()
-    }
-
-    private fun spawnHit() {
-
-    }
 
     override fun render(delta: Float) {
-        // generally good practice to update the camera's matrices once per frame
-        camera.update()
 
-        // tell the SpriteBatch to render in the coordinate system specified by the camera.
-        game.batch.projectionMatrix = camera.combined
-
-        // begin a new batch and draw the bucket and all drops
-        game.batch.use { batch ->
-            game.font.draw(batch, "Hits: $accurateHits", 0f, 1280f)
-            activeHitBlocks.forEach { hitBlock -> batch.draw(hitImage, hitBlock.x, hitBlock.y) }
-        }
-
-        // process user input
         if (Gdx.input.isTouched) {
             touchPos.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
             camera.unproject(touchPos)
-            oneTouch.x = touchPos.x - 64f / 2f
-            hitSound.play()
+            hitbox[TransformComponent.mapper]?.let { transform -> transform.bounds.x = touchPos.x - 128f / 2f }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            oneTouch.x -= 200 * delta
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            oneTouch.x += 200 * delta
+        when {
+            Gdx.input.isKeyPressed(Input.Keys.LEFT) -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = -200f }
+            Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = 200f }
+            else -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = 0f }
         }
 
-        // make sure the bucket stays within the screen bounds
-        oneTouch.x = MathUtils.clamp(oneTouch.x, 0f, 720f - 64f)
+        // everything is now done withing our entity engine --> update it every frame
 
-        // check if we need to create a new raindrop
-        if (TimeUtils.nanoTime() - lastDropTime > 500_000_000L) {
-            spawnRaindrop()
-        }
-
-        // move the raindrops, remove any that are beneath the bottom edge of the
-        //    screen or that hit the bucket.  In the latter case, play back a sound
-        //    effect also
-        activeHitBlocks.iterate { hitBlock, iterator ->
-            hitBlock.y -= dropRate * 200 * delta
-            if (hitBlock.y + 64 < 0)
-                iterator.remove()
-            hitBlockPool(hitBlock)
-                log.debug { "[GameScreen] Missed a hitBlock! Pool free objects: ${hitBlockPool.free}" }
-
-
-
-            if (hitBlock.overlaps(oneTouch)) {
-                accurateHits++
-                iterator.remove()
-                hitBlockPool(hitBlock)
-                log.debug { "[GameScreen] Pool free objects: ${hitBlockPool.free}" }
-            }
-        }
+        engine.update(delta)
     }
 
     override fun show() {
-        // start the playback of the background music when the screen is shown
-        testAudio.play()
-        spawnRaindrop()
+        // start the playback of the background music when we enter game screen
+        assets[MusicAssets.Song].play()
+
+        hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
+        //
+
+        // init entity engine
+        engine.apply {
+            // add systems
+            addSystem(SpawnSystem(assets))
+            addSystem(MoveSystem())
+            addSystem(RenderSystem(hitbox, batch, font, camera))
+            // add Collision last since it removes entities
+            addSystem(CollisionSystem(hitbox, assets))
+        }
     }
 
-    override fun dispose() {
-        log.debug { "[GameScreen] Disposing ${this.javaClass.simpleName}" }
-        testAudio.dispose()
-    }
 }

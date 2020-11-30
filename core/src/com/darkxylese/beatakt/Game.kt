@@ -1,37 +1,49 @@
 package com.darkxylese.beatakt
 
 import com.badlogic.gdx.Application.LOG_DEBUG
+import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.darkxylese.beatakt.screen.GameScreen
 import com.darkxylese.beatakt.screen.LoadingScreen
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
+import ktx.inject.Context
+import ktx.inject.register
 import ktx.log.debug
 import ktx.log.logger
 
 private val log = logger<Game>()
 
 class Game : KtxGame<KtxScreen>() {
-    val batch by lazy { SpriteBatch() }
-    // use LibGDX's default Arial font
-    val font by lazy { BitmapFont() }
-    val assets = AssetManager()
-
+    private val context = Context()
 
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
-        log.debug {"[Game] Create game instance"}
-        addScreen(LoadingScreen(this))
+
+        context.register {
+            bindSingleton(this@Game)
+            bindSingleton<Batch>(SpriteBatch())
+            bindSingleton(BitmapFont())
+            bindSingleton(AssetManager())
+            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 720f, 1280f) })
+            bindSingleton(PooledEngine())
+
+            addScreen(LoadingScreen(inject(), inject(), inject(), inject(), inject()))
+            addScreen(GameScreen(inject(), inject(), inject(), inject(), inject()))
+
+        }
         setScreen<LoadingScreen>()
         super.create()
     }
 
     override fun dispose() {
-        batch.dispose()
-        font.dispose()
-        assets.dispose()
+        log.debug { "Entities in engine: ${context.inject<PooledEngine>().entities.size()}" }
+        context.dispose()
         super.dispose()
     }
 }
