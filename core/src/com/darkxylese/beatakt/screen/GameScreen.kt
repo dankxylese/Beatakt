@@ -20,11 +20,9 @@ import com.darkxylese.beatakt.ecs.system.MoveSystem
 import com.darkxylese.beatakt.ecs.system.RenderSystem
 import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import ktx.app.KtxScreen
+import ktx.ashley.*
 import ktx.log.debug
 import ktx.log.logger
-import ktx.ashley.entity
-import ktx.ashley.with
-import ktx.ashley.get
 
 private val log = logger<GameScreen>()
 
@@ -36,10 +34,11 @@ class GameScreen(private val batch: Batch,
 
     private val hitbox = engine.entity {
         with<HitboxComponent>()
-        with<TransformComponent> { bounds.set(720f / 2f - 128f / 2f, 20f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(120f / 2f - 128f / 2f, 20f, 128f, 128f) }
         with<MoveComponent>()
         with<RenderComponent>()
     }
+
 
     // create the touchPos to store mouse click position
     private val touchPos = Vector3()
@@ -67,7 +66,6 @@ class GameScreen(private val batch: Batch,
         assets[MusicAssets.Song].play()
 
         hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
-        //
 
         // init entity engine
         engine.apply {

@@ -10,8 +10,7 @@ import com.darkxylese.beatakt.ecs.component.CollisionComponent
 import com.darkxylese.beatakt.ecs.component.MoveComponent
 import com.darkxylese.beatakt.ecs.component.RenderComponent
 import com.darkxylese.beatakt.ecs.component.TransformComponent
-import ktx.ashley.entity
-import ktx.ashley.with
+import ktx.ashley.*
 
 class SpawnSystem(assets: AssetManager) : IntervalSystem(1f) {
     private val hitRegion = assets[TextureAtlasAssets.Game].findRegion("hit")
