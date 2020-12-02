@@ -10,4 +10,6 @@ class TransformComponent : Component {
     }
 
     val bounds = Rectangle()
+    val accuracy = 0f
+
 }

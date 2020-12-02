@@ -25,10 +25,10 @@ class SpawnSystem(assets: AssetManager) : IntervalSystem(1f) {
         engine.entity {
             with<RenderComponent> {
                 sprite.setRegion(hitRegion)
-                z = 1
+                z = 2
             }
-            with<TransformComponent> { bounds.set(MathUtils.random(0f, 800 - 128f), 1280f, 128f, 128f) }
-            with<MoveComponent> { speed.set(0f, -200f) }
+            with<TransformComponent> { bounds.set((MathUtils.random(0, 3))*128f, 910f, 128f, 128f) }
+            with<MoveComponent> { speed.set(0f, -400f) }
             with<CollisionComponent>()
         }
     }

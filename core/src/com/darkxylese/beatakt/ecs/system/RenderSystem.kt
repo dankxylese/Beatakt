@@ -30,7 +30,7 @@ class RenderSystem(hitbox: Entity,
         // draw all entities in one batch
         batch.use {
             super.update(deltaTime)
-            font.draw(batch, "Hits: ${hitboxCmp.accurateHits}", 0f, 1280f)
+            font.draw(batch, "Hits: ${hitboxCmp.hits}  ｜  Score: ${hitboxCmp.score}  ｜  Accuracy: ${hitboxCmp.accuracy}", 0f, 910f)
         }
     }
 

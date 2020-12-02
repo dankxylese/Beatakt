@@ -29,7 +29,8 @@ class Game : KtxGame<KtxScreen>() {
             bindSingleton<Batch>(SpriteBatch())
             bindSingleton(BitmapFont())
             bindSingleton(AssetManager())
-            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 720f, 1280f) })
+            //bindSingleton(OrthographicCamera().apply { setToOrtho(false, 720f, 1280f) })
+            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 512f, 910f) })
             bindSingleton(PooledEngine())
 
             addScreen(LoadingScreen(inject(), inject(), inject(), inject(), inject()))

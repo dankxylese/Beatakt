@@ -11,5 +11,12 @@ class RenderComponent : Component {
 
     val sprite = Sprite()
     // Determines which object overlaps what
-    var z = 0
+    var z = 1 //render layering priority
+    var vis = true //visible to collision
+    var timeSinceCreation = 0f
+
+    fun set(z: Int, vis: Boolean) {
+        this.z = z
+        this.vis = vis
+    }
 }

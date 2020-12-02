@@ -8,5 +8,8 @@ class HitboxComponent : Component {
         val mapper = mapperFor<HitboxComponent>()
     }
 
-    var accurateHits = 0
+    var hits = 0
+    var score = 0
+    var accuracy = ""
+
 }

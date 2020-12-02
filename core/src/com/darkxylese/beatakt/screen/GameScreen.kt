@@ -34,8 +34,48 @@ class GameScreen(private val batch: Batch,
 
     private val hitbox = engine.entity {
         with<HitboxComponent>()
-        with<TransformComponent> { bounds.set(120f / 2f - 128f / 2f, 20f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(0f, 164f, 32f, 64f) }
         with<MoveComponent>()
+        with<RenderComponent> { set(0, true) }
+    }
+    private val hitboxa = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(0f, 100f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxaa = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(0f, 228f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxb = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(128f, 100f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxbb = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(128f, 228f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxc = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(256f, 100f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxcc = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(256f, 228f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxd = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(384f, 100f, 128f, 128f) }
+        with<RenderComponent>()
+    }
+    private val hitboxdd = engine.entity {
+        with<HitboxComponent>()
+        with<TransformComponent> { bounds.set(384f, 228f, 128f, 128f) }
         with<RenderComponent>()
     }
 
@@ -48,7 +88,19 @@ class GameScreen(private val batch: Batch,
         if (Gdx.input.isTouched) {
             touchPos.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
             camera.unproject(touchPos)
-            hitbox[TransformComponent.mapper]?.let { transform -> transform.bounds.x = touchPos.x - 128f / 2f }
+            hitbox[TransformComponent.mapper]?.let { transform -> transform.bounds.x = touchPos.x - 32f / 2f }
+            hitbox[RenderComponent.mapper]?.let { render -> render.z = 2 }
+            hitbox[RenderComponent.mapper]?.let { render ->
+                render.vis = true
+                log.debug { "vis: True"}
+            }
+        }else{
+            hitbox[RenderComponent.mapper]?.let { render -> render.z = 0 } //not visible on screen
+            hitbox[RenderComponent.mapper]?.let { render ->
+                render.vis = false
+                log.debug { "vis: False"}
+            } //not visible to collision system
+
         }
         when {
             Gdx.input.isKeyPressed(Input.Keys.LEFT) -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = -200f }
@@ -63,9 +115,17 @@ class GameScreen(private val batch: Batch,
 
     override fun show() {
         // start the playback of the background music when we enter game screen
-        assets[MusicAssets.Song].play()
+        //assets[MusicAssets.Song].play()
 
-        hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
+        hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("pause"))
+        hitboxa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox2"))
+        hitboxaa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
+        hitboxb[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox2"))
+        hitboxbb[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
+        hitboxc[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox2"))
+        hitboxcc[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
+        hitboxd[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox2"))
+        hitboxdd[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitbox"))
 
         // init entity engine
         engine.apply {
