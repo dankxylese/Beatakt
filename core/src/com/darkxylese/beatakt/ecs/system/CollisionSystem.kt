@@ -16,7 +16,7 @@ private val log = logger<CollisionSystem>()
 
 class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()) {
     private val hitSound = assets[SoundAssets.Hit]
-    private val hitboxBounds = hitbox[TransformComponent.mapper]!!.bounds //bounds of touch
+    private val hitboxBounds = hitbox[TransformComponent.mapper]!!.bounds //bounds of touched hitbox
     private val scoreCmp = hitbox[ScoreComponent.mapper]!! //top score thing TEMP
 
 
@@ -33,22 +33,22 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
 
             //speed 200 BASELINE TEMPORARY
             val veryEarly = Vector2()
-            veryEarly.x = 0.85F
-            veryEarly.y = 0.88F
+            veryEarly.x = 3.52F
+            veryEarly.y = 3.66F
             val early = Vector2()
-            early.x = 0.88F
-            early.y = 0.91F
+            early.x = 3.66F
+            early.y = 3.76F
             val perfect = Vector2()
-            perfect.x = 0.91F
-            perfect.y = 0.95F
+            perfect.x = 3.76F
+            perfect.y = 3.92F
             val late = Vector2()
-            late.x = 0.95F
-            late.y = 0.98F
+            late.x = 3.92F
+            late.y = 4.04F
             val veryLate = Vector2()
-            veryLate.x = 0.98F
-            veryLate.y = 1.01F
+            veryLate.x = 4.04F
+            veryLate.y = 4.16F
 
-            log.debug { (veryEarly.x * speed!!).toString() }
+
 
 
             if (Gdx.input.isTouched) {
@@ -62,27 +62,28 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
                         //log.debug { "overlap" }
 
                            //add appropriate score
-                        if (render.timeSinceCreation >= veryEarly.x * speed!! && render.timeSinceCreation < veryEarly.y * speed){ //very early 50
+                        if (render.timeSinceCreation >= veryEarly.x / speed!! && render.timeSinceCreation < veryEarly.y / speed){ //very early 50
                             scoreCmp.score += 50
                             scoreCmp.accuracy = "very early"
+                            log.debug { (render.timeSinceCreation).toString() }
                         }
-                        if (render.timeSinceCreation >= early.x * speed && render.timeSinceCreation < early.y * speed){ //early 100
+                        if (render.timeSinceCreation >= early.x / speed && render.timeSinceCreation < early.y / speed){ //early 100
                             scoreCmp.score += 100
                             scoreCmp.accuracy = "early"
                         }
-                        if (render.timeSinceCreation >= perfect.x * speed && render.timeSinceCreation < perfect.y * speed){ //perfect 300
+                        if (render.timeSinceCreation >= perfect.x / speed && render.timeSinceCreation < perfect.y / speed){ //perfect 300
                             scoreCmp.score += 300
                             scoreCmp.accuracy = "perfect"
                         }
-                        if (render.timeSinceCreation >= late.x * speed && render.timeSinceCreation < late.y * speed){ //late 100
+                        if (render.timeSinceCreation >= late.x / speed && render.timeSinceCreation < late.y / speed){ //late 100
                             scoreCmp.score += 100
                             scoreCmp.accuracy = "late"
                         }
-                        if (render.timeSinceCreation >= veryLate.x * speed && render.timeSinceCreation < veryLate.y * speed){ //very late 50
+                        if (render.timeSinceCreation >= veryLate.x / speed && render.timeSinceCreation < veryLate.y / speed){ //very late 50
                             scoreCmp.score += 50
                             scoreCmp.accuracy = "very late"
                         }
-                        if (render.timeSinceCreation >= veryLate.y * speed ){ //miss
+                        if (render.timeSinceCreation >= veryLate.y / speed ){ //miss
                             scoreCmp.accuracy = "miss"
                         }
 

@@ -42,7 +42,7 @@ class Game : KtxGame<KtxScreen>() {
     }
 
     override fun dispose() {
-        log.debug { "Entities in engine: ${context.inject<PooledEngine>().entities.size()}" }
+        log.debug { "Entities in engine at kill time: ${context.inject<PooledEngine>().entities.size()}" }
         context.dispose()
         super.dispose()
     }
