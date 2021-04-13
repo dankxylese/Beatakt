@@ -16,7 +16,7 @@ private val log = logger<CollisionSystem>()
 
 class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()) {
     private val hitSound = assets[SoundAssets.Hit]
-    private val hitboxBounds = hitbox[TransformComponent.mapper]!!.bounds //bounds of touched hitbox
+    private val hitboxCollisionBox = hitbox[TransformCollisionComponent.mapper]!!.bounds //collision box of hitbox
     private val scoreCmp = hitbox[ScoreComponent.mapper]!! //top score thing TEMP
 
 
@@ -33,20 +33,20 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
 
             //speed 200 BASELINE TEMPORARY
             val veryEarly = Vector2()
-            veryEarly.x = 3.52F
-            veryEarly.y = 3.66F
+            veryEarly.x = 3.48F
+            veryEarly.y = 3.60F
             val early = Vector2()
-            early.x = 3.66F
+            early.x = 3.60F
             early.y = 3.76F
             val perfect = Vector2()
             perfect.x = 3.76F
-            perfect.y = 3.92F
+            perfect.y = 3.95F
             val late = Vector2()
-            late.x = 3.92F
-            late.y = 4.04F
+            late.x = 3.95F
+            late.y = 4.11F
             val veryLate = Vector2()
-            veryLate.x = 4.04F
-            veryLate.y = 4.16F
+            veryLate.x = 4.11F
+            veryLate.y = 4.23F
 
 
 
@@ -55,11 +55,11 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
                 entity[TransformComponent.mapper]?.let { transform ->
                     if (transform.bounds.y < 0) {
                         render.timeSinceCreation = 0f //clean time for when entity gets reused
-                        //log.debug { render.timeSinceCreation.toString() }
                         engine.removeEntity(entity)
 
-                    } else if (transform.bounds.overlaps(hitboxBounds)) {
+                    } else if (transform.bounds.overlaps(hitboxCollisionBox)) {
                         //log.debug { "overlap" }
+                        log.debug { render.timeSinceCreation.toString() }
 
                            //add appropriate score
                         if (render.timeSinceCreation >= veryEarly.x / speed!! && render.timeSinceCreation < veryEarly.y / speed){ //very early 50

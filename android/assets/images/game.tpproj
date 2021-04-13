@@ -32,12 +32,12 @@ limitMemory=true
 useIndexes=true
 
 scaleFactors=[{suffix:"",factor:1,resampling:bicubic}]
-inputFiles=[{path:../../CS-306/AndroidStudioProjects/hit.png,type:Input,regionName:null},{path:../../CS-306/AndroidStudioProjects/hitbox.png,type:Input,regionName:null},{path:../../CS-306/AndroidStudioProjects/hitbox2.png,type:Input,regionName:null},{path:../../CS-306/AndroidStudioProjects/separator.png,type:Input,regionName:null},{path:../../CS-306/AndroidStudioProjects/pause.png,type:Input,regionName:null}]
+inputFiles=[{path:separator.png,type:Input,regionName:null},{path:hit.png,type:Input,regionName:null},{path:pause.png,type:Input,regionName:null},{path:hitbox2.png,type:Ignore},{path:hitbox.png,type:Ignore},{path:hitboxUnifiedCentered.png,type:Input,regionName:null},{path:hitRed.png,type:Input,regionName:null}]
 
 
 -PROJ-
 
-version=4.8.2
+version=4.10.0
 fileTypeType=png
 fileTypeData={encoding:RGBA8888}
-previewBackgroundColor=ffffffff
+previewBackgroundColor=000000ff

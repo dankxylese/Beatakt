@@ -28,7 +28,7 @@ class SpawnSystem(assets: AssetManager) : IntervalSystem(1f) {
                 z = 2
             }
             with<TransformComponent> { bounds.set((MathUtils.random(0, 3))*128f, 910f, 128f, 128f) } //spawns the random hit block
-            with<MoveComponent> { speed.set(0f, -200f) } //speed of the hit
+            with<MoveComponent> { speed.set(0f, -570f) } //speed of the hit
             with<CollisionComponent>() //attach collision component to be able to click it
         }
     }

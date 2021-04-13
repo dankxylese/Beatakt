@@ -19,7 +19,7 @@ class RenderSystem(hitbox: Entity,
         allOf(TransformComponent::class, RenderComponent::class).get(),
         // compareBy is used to render entities by their z-index
         compareBy { entity: Entity -> entity[RenderComponent.mapper]?.z }) {
-    private val hitboxCmp = hitbox[ScoreComponent.mapper]!!
+    private val scoreCmp = hitbox[ScoreComponent.mapper]!!
 
     override fun update(deltaTime: Float) {
         forceSort()
@@ -30,7 +30,7 @@ class RenderSystem(hitbox: Entity,
         // draw all entities in one batch
         batch.use {
             super.update(deltaTime)
-            font.draw(batch, "Hits: ${hitboxCmp.hits}  ｜  Score: ${hitboxCmp.score}  ｜  Accuracy: ${hitboxCmp.accuracy}", 0f, 910f)
+            font.draw(batch, "Hits: ${scoreCmp.hits}  ｜  Score: ${scoreCmp.score}  ｜  Accuracy: ${scoreCmp.accuracy}", 0f, 910f)
         }
     }
 
@@ -38,6 +38,7 @@ class RenderSystem(hitbox: Entity,
         entity[TransformComponent.mapper]?.let { transform ->
             entity[RenderComponent.mapper]?.let { render ->
                 batch.draw(render.sprite, transform.bounds.x, transform.bounds.y)
+
             }
         }
     }

@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.math.Rectangle
 import ktx.ashley.mapperFor
 
-class TransformComponent : Component {
+class TransformCollisionComponent : Component {
     companion object {
-        val mapper = mapperFor<TransformComponent>()
+        val mapper = mapperFor<TransformCollisionComponent>()
     }
 
     val bounds = Rectangle()
