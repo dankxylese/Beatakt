@@ -8,10 +8,9 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.assets.AssetManager
-import com.darkxylese.beatakt.assets.MusicAssets
 import com.darkxylese.beatakt.assets.TextureAtlasAssets
 import com.darkxylese.beatakt.assets.get
-import com.darkxylese.beatakt.ecs.component.HitboxComponent
+import com.darkxylese.beatakt.ecs.component.ScoreComponent
 import com.darkxylese.beatakt.ecs.component.MoveComponent
 import com.darkxylese.beatakt.ecs.component.RenderComponent
 import com.darkxylese.beatakt.ecs.component.TransformComponent
@@ -21,7 +20,6 @@ import com.darkxylese.beatakt.ecs.system.RenderSystem
 import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import ktx.app.KtxScreen
 import ktx.ashley.*
-import ktx.log.debug
 import ktx.log.logger
 
 private val log = logger<GameScreen>()
@@ -33,48 +31,48 @@ class GameScreen(private val batch: Batch,
                  private val engine: PooledEngine) : KtxScreen {
 
     private val hitbox = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(0f, 164f, 32f, 64f) }
         with<MoveComponent>()
         with<RenderComponent> { set(0, true) }
     }
     private val hitboxa = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(0f, 100f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxaa = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(0f, 228f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxb = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(128f, 100f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxbb = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(128f, 228f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxc = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(256f, 100f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxcc = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(256f, 228f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxd = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(384f, 100f, 128f, 128f) }
         with<RenderComponent>()
     }
     private val hitboxdd = engine.entity {
-        with<HitboxComponent>()
+        with<ScoreComponent>()
         with<TransformComponent> { bounds.set(384f, 228f, 128f, 128f) }
         with<RenderComponent>()
     }
@@ -92,13 +90,13 @@ class GameScreen(private val batch: Batch,
             hitbox[RenderComponent.mapper]?.let { render -> render.z = 2 }
             hitbox[RenderComponent.mapper]?.let { render ->
                 render.vis = true
-                log.debug { "vis: True"}
+                //log.debug { "vis: True"}
             }
         }else{
             hitbox[RenderComponent.mapper]?.let { render -> render.z = 0 } //not visible on screen
             hitbox[RenderComponent.mapper]?.let { render ->
                 render.vis = false
-                log.debug { "vis: False"}
+                //log.debug { "vis: False"}
             } //not visible to collision system
 
         }

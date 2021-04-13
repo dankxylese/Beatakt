@@ -5,7 +5,7 @@ import com.badlogic.ashley.systems.SortedIteratingSystem
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.darkxylese.beatakt.ecs.component.HitboxComponent
+import com.darkxylese.beatakt.ecs.component.ScoreComponent
 import com.darkxylese.beatakt.ecs.component.RenderComponent
 import com.darkxylese.beatakt.ecs.component.TransformComponent
 import ktx.ashley.allOf
@@ -19,7 +19,7 @@ class RenderSystem(hitbox: Entity,
         allOf(TransformComponent::class, RenderComponent::class).get(),
         // compareBy is used to render entities by their z-index
         compareBy { entity: Entity -> entity[RenderComponent.mapper]?.z }) {
-    private val hitboxCmp = hitbox[HitboxComponent.mapper]!!
+    private val hitboxCmp = hitbox[ScoreComponent.mapper]!!
 
     override fun update(deltaTime: Float) {
         forceSort()
