@@ -6,14 +6,16 @@ import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.math.MathUtils
 import com.darkxylese.beatakt.assets.TextureAtlasAssets
 import com.darkxylese.beatakt.assets.get
-import com.darkxylese.beatakt.ecs.component.CollisionComponent
-import com.darkxylese.beatakt.ecs.component.MoveComponent
-import com.darkxylese.beatakt.ecs.component.RenderComponent
-import com.darkxylese.beatakt.ecs.component.TransformComponent
+import com.badlogic.ashley.core.Component
+import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.core.PooledEngine
+import com.darkxylese.beatakt.ecs.component.*
 import ktx.ashley.*
 
-class SpawnSystem(assets: AssetManager) : IntervalSystem(1f) {
+class SpawnSystem(hitbox: Entity, assets: AssetManager) : IntervalSystem(MathUtils.random(0.5f, 0.9f)) { //1f = 1s TODO: Remove interval system, add map reading system, which will call spawn whenever its needed.
     private val hitRegion = assets[TextureAtlasAssets.Game].findRegion("hit")
+    private var createdTotal = 0
+    private val scoreCmp = hitbox[ScoreComponent.mapper]!! //top score thing TEMP
 
     override fun addedToEngine(engine: Engine?) {
         super.addedToEngine(engine)
@@ -28,8 +30,11 @@ class SpawnSystem(assets: AssetManager) : IntervalSystem(1f) {
                 z = 2
             }
             with<TransformComponent> { bounds.set((MathUtils.random(0, 3))*128f, 910f, 128f, 128f) } //spawns the random hit block
-            with<MoveComponent> { speed.set(0f, -570f) } //speed of the hit
+            with<MoveComponent> { speed.set(0f, -200f) } //speed of the hit
             with<CollisionComponent>() //attach collision component to be able to click it
+            with<IdComponent> { id = createdTotal }
         }
+        scoreCmp.currentObjects.add(createdTotal)
+        createdTotal+=1
     }
 }

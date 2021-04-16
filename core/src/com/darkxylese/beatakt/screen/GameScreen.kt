@@ -61,7 +61,7 @@ class GameScreen(private val batch: Batch,
 
     override fun render(delta: Float) {
 
-        if (Gdx.input.isTouched) {
+        if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)
             camera.unproject(touchPos)
             hitbox[TransformComponent.mapper]?.let { transform -> transform.bounds.x = touchPos.x - 64F}
@@ -104,7 +104,7 @@ class GameScreen(private val batch: Batch,
         // init entity engine
         engine.apply {
             // add systems
-            addSystem(SpawnSystem(assets))
+            addSystem(SpawnSystem(hitbox, assets))
             addSystem(MoveSystem())
             addSystem(RenderSystem(hitbox, batch, font, camera))
             // add Collision last since it removes entities

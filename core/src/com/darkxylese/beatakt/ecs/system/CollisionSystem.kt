@@ -29,9 +29,10 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
 
             var speed = (if (moveComponentCache?.speed?.y != null) moveComponentCache.speed.y * -0.005 else null) //float of speed (of entity) in the 200 scale # 600 would result in speed = 3
 
-            //NOTE: for multiple screen size compatibility, take time to travel the whole screen size, then calculate 3/4 of it, and place the hitbox 1/4 of the screen from the bottom.
+            //TODO: for multiple screen size compatibility, take time to travel the whole screen size, then calculate 3/4 of it, and place the hitbox 1/4 of the screen from the bottom.
 
             //speed 200 BASELINE TEMPORARY
+            val adjustDelay = 0 //TODO: TAKE OUT OF THIS SYSTEM AND ADD TO USER DATA AS A USER CHANGEABLE VARIABLE
             val veryEarly = Vector2()
             veryEarly.x = 3.48F
             veryEarly.y = 3.60F
@@ -51,62 +52,97 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
 
 
 
-            if (Gdx.input.isTouched) {
-                entity[TransformComponent.mapper]?.let { transform ->
+            if (Gdx.input.justTouched()) { //TODO: detect if this is the first touched entity, if yes then work on that. (ENABLES very quick beatmaps/speeds)
+                entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     if (transform.bounds.y < 0) {
                         render.timeSinceCreation = 0f //clean time for when entity gets reused
-                        engine.removeEntity(entity)
+                        scoreCalc(0, "miss")
 
-                    } else if (transform.bounds.overlaps(hitboxCollisionBox)) {
-                        //log.debug { "overlap" }
-                        log.debug { render.timeSinceCreation.toString() }
+                        if (popObject(entity)) {   //pop object from tracker
+                            engine.removeEntity(entity)
+                        }
+                    }
+                    if (transform.bounds.overlaps(hitboxCollisionBox)) {
+                       // log.debug { render.timeSinceCreation.toString() }
 
-                           //add appropriate score
-                        if (render.timeSinceCreation >= veryEarly.x / speed!! && render.timeSinceCreation < veryEarly.y / speed){ //very early 50
-                            scoreCmp.score += 50
-                            scoreCmp.accuracy = "very early"
-                            log.debug { (render.timeSinceCreation).toString() }
-                        }
-                        if (render.timeSinceCreation >= early.x / speed && render.timeSinceCreation < early.y / speed){ //early 100
-                            scoreCmp.score += 100
-                            scoreCmp.accuracy = "early"
-                        }
-                        if (render.timeSinceCreation >= perfect.x / speed && render.timeSinceCreation < perfect.y / speed){ //perfect 300
-                            scoreCmp.score += 300
-                            scoreCmp.accuracy = "perfect"
-                        }
-                        if (render.timeSinceCreation >= late.x / speed && render.timeSinceCreation < late.y / speed){ //late 100
-                            scoreCmp.score += 100
-                            scoreCmp.accuracy = "late"
-                        }
-                        if (render.timeSinceCreation >= veryLate.x / speed && render.timeSinceCreation < veryLate.y / speed){ //very late 50
-                            scoreCmp.score += 50
-                            scoreCmp.accuracy = "very late"
-                        }
-                        if (render.timeSinceCreation >= veryLate.y / speed ){ //miss
-                            scoreCmp.accuracy = "miss"
+                           //add appropriate score if hit
+                        if (render.timeSinceCreation >= (veryEarly.x + adjustDelay) / speed!! && render.timeSinceCreation < (veryEarly.y + adjustDelay) / speed){ //very early 50
+                            scoreCalc(50, "very early")
+                        } else if (render.timeSinceCreation >= (early.x + adjustDelay) / speed && render.timeSinceCreation < (early.y + adjustDelay) / speed){ //early 100
+                            scoreCalc(100, "early")
+                        } else if (render.timeSinceCreation >= (perfect.x + adjustDelay) / speed && render.timeSinceCreation < (perfect.y + adjustDelay) / speed){ //perfect 300
+                            scoreCalc(300, "perfect")
+                        } else if (render.timeSinceCreation >= (late.x + adjustDelay) / speed && render.timeSinceCreation < (late.y + adjustDelay) / speed){ //late 100
+                            scoreCalc(100, "late")
+                        } else if (render.timeSinceCreation >= (veryLate.x + adjustDelay) / speed && render.timeSinceCreation < (veryLate.y + adjustDelay) / speed){ //very late 50
+                            scoreCalc(50, "very late")
+                        } else { // overlapped too late (or frames were delivered too slowly and not in time (as this is a time dependent and not fps, calculation)) = miss
+                            scoreCalc(0, "miss")
                         }
 
                         scoreCmp.hits++
                         hitSound.play()
                         render.timeSinceCreation = 0f //clean time for when entity gets reused
-                        engine.removeEntity(entity)
+                        if (popObject(entity)) {
+                            engine.removeEntity(entity)
+                        }
                     }
                 }
             } else {
-                //log.debug { "no overlap" }
-                entity[TransformComponent.mapper]?.let { transform ->
+                entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (without touch)
                     if (transform.bounds.y < 0) {
                         render.timeSinceCreation = 0f //clean time for when entity gets reused
-                        //log.debug { render.timeSinceCreation.toString() } //should be 0
-                        engine.removeEntity(entity)
+                        scoreCalc(0, "miss")
+                        scoreCmp.currentObjects
+                        if (popObject(entity)) {
+                            engine.removeEntity(entity)
+                        }
                     }
                 }
             }
         }
     }
 
-    fun scoreCalc(howAccurateHit : Int){
+    fun scoreCalc(howAccurateHit : Int, howTimedHit : String){
+
+        // Score = Hit Value + (Hit Value * ((Combo multiplier * Difficulty multiplier * Mod multiplier) / 25))
+        if (howAccurateHit == 0) {
+            scoreCmp.s0count += 1
+            scoreCmp.streak = 0
+        }
+        if (howAccurateHit == 50) {
+            scoreCmp.s50count += 1
+            scoreCmp.streak += 1
+            scoreCmp.score += 50 + (50 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+        }
+        if (howAccurateHit == 100) {
+            scoreCmp.s100count += 1
+            scoreCmp.streak += 1
+            scoreCmp.score += 100 + (100 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+        }
+        if (howAccurateHit == 300) {
+            scoreCmp.s300count += 1
+            scoreCmp.streak += 1
+            scoreCmp.score += 300 + (300 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+        }
+        scoreCmp.accuracy = howTimedHit
+    }
+    fun popObject(entity: Entity) : Boolean { //pops the first object from object tracker
+
+        entity[IdComponent.mapper]?.let { ID ->
+            log.debug {ID.id.toString()}
+            log.debug {scoreCmp.currentObjects.peek().toString()}
+            return if (scoreCmp.currentObjects.peek() == ID.id){
+                scoreCmp.currentObjects.remove()
+                log.debug {"Removed object"}
+                true
+            } else {
+                log.debug {"Failed to remove // BUG"}
+                false
+            }
+        }
+        log.debug {"Failed to Return False"}
+        return false
 
     }
 }
