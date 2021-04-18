@@ -105,11 +105,8 @@ class GameScreen(private val batch: Batch,
 
         // init entity engine
         engine.apply {
-            // add systems
+            // add this screen specific systems
             addSystem(SpawnSystem(hitbox, assets))
-            addSystem(MoveSystem())
-            //addSystem(PlayerInputSystem())
-
             addSystem(RenderSystem(hitbox, batch, font, camera))
             // add Collision last since it removes entities
             addSystem(CollisionSystem(hitbox, assets))
