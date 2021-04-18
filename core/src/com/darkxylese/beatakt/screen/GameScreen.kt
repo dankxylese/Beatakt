@@ -3,6 +3,7 @@ package com.darkxylese.beatakt.screen
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
@@ -60,6 +61,13 @@ class GameScreen(private val batch: Batch,
     private val touchPos = Vector3()
 
     override fun render(delta: Float) {
+        Gdx.input.inputProcessor = object : InputAdapter() {
+            override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
+                log.debug{"X: $screenX, Y: $screenY"}
+
+                return true
+            }
+        }
 
         if (Gdx.input.justTouched()) {
             touchPos.set(Gdx.input.x.toFloat(), Gdx.input.y.toFloat(), 0f)

@@ -8,7 +8,20 @@ import com.darkxylese.beatakt.ecs.component.TransformComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 
+private const val UPDATE_RATE = 1/25f
+
 class MoveSystem : IteratingSystem(allOf(TransformComponent::class, MoveComponent::class).get()) {
+
+    private var accumulator = 0f
+
+    override fun update(deltaTime: Float) {
+        accumulator += deltaTime
+        while(accumulator >= UPDATE_RATE){
+            accumulator -= UPDATE_RATE
+            super.update(UPDATE_RATE)
+        }
+    }
+
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[TransformComponent.mapper]?.let { transform ->
             entity[MoveComponent.mapper]?.let { move ->

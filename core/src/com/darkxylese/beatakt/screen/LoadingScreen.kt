@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.assets.AssetManager
-import com.darkxylese.beatakt.Game
+import com.darkxylese.beatakt.ui.Game
 import com.darkxylese.beatakt.assets.MusicAssets
 import com.darkxylese.beatakt.assets.SoundAssets
 import com.darkxylese.beatakt.assets.TextureAtlasAssets

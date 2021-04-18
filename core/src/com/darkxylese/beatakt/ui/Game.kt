@@ -1,4 +1,4 @@
-package com.darkxylese.beatakt
+package com.darkxylese.beatakt.ui
 
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.ashley.core.PooledEngine
