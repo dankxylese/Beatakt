@@ -54,7 +54,8 @@ class LoadingScreen(private val game: KtxGame<KtxScreen>,
                         font,
                         assets,
                         camera,
-                        ecsEngine
+                        ecsEngine,
+                        gameEventManager
                 )
         )
     }

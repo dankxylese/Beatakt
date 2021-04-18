@@ -14,9 +14,10 @@ import ktx.log.logger
 
 private val log = logger<CollisionSystem>()
 
-class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()) {
+class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(allOf(TransformComponent::class, HitCollisionComponent::class).get()) {
     private val hitSound = assets[SoundAssets.Hit]
     private val hitboxCollisionBox = hitbox[TransformCollisionComponent.mapper]!!.bounds //collision box of hitbox
+    private val hitboxMoveComponent = hitbox[PlayerMoveComponent.mapper]!! //collision box of hitbox
     private val scoreCmp = hitbox[ScoreComponent.mapper]!! //top score thing TEMP
 
 
@@ -54,7 +55,8 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
 
 
 
-            if (Gdx.input.justTouched()) {
+            if (hitboxMoveComponent.cooldown1 != 0f || hitboxMoveComponent.cooldown2 != 0f || hitboxMoveComponent.cooldown3 != 0f || hitboxMoveComponent.cooldown4 != 0f) {
+                //log.debug { deltaTime.toString() }
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     if (transform.bounds.y < 0) {
                         render.timeSinceCreation = 0f //clean time for when entity gets reused

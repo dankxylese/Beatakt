@@ -12,6 +12,7 @@ import com.darkxylese.beatakt.assets.TextureAtlasAssets
 import com.darkxylese.beatakt.assets.get
 import com.darkxylese.beatakt.ecs.component.*
 import com.darkxylese.beatakt.ecs.system.*
+import com.darkxylese.beatakt.event.GameEventManager
 import ktx.app.KtxScreen
 import ktx.ashley.*
 import ktx.log.logger
@@ -22,7 +23,8 @@ class GameScreen(private val batch: Batch,
                  private val font: BitmapFont,
                  private val assets: AssetManager,
                  private val camera: OrthographicCamera,
-                 private val engine: PooledEngine) : KtxScreen {
+                 private val engine: PooledEngine,
+                 private val gameEventManager: GameEventManager) : KtxScreen {
 
 
     private val hitbox = engine.entity {
@@ -60,6 +62,7 @@ class GameScreen(private val batch: Batch,
     override fun render(delta: Float) {
         font.data.setScale(2.5f)
 
+        /*
         Gdx.input.inputProcessor = object : InputAdapter() {
             override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
                 log.debug{"X: $screenX, Y: $screenY"}
@@ -73,7 +76,7 @@ class GameScreen(private val batch: Batch,
             camera.unproject(touchPos)
             hitbox[TransformComponent.mapper]?.let { transform -> transform.bounds.x = touchPos.x - 64F}
             hitbox[TransformCollisionComponent.mapper]?.let { transformCol -> transformCol.bounds.x = touchPos.x - 30F}
-            //hitbox[TransformComponent.mapper]?.let {transform -> log.debug { transform.bounds.x.toString() }}
+            hitbox[TransformComponent.mapper]?.let {transform -> log.debug { transform.bounds.x.toString() }}
             hitbox[RenderComponent.mapper]?.let { render -> render.z = 3 }
             hitbox[RenderComponent.mapper]?.let { render ->
                 render.vis = true
@@ -86,7 +89,7 @@ class GameScreen(private val batch: Batch,
                 //log.debug { "vis: False"}
             } //not visible to collision system
 
-        }
+        } */
 
         // everything is now done withing our entity engine --> update it every frame
 
@@ -96,6 +99,7 @@ class GameScreen(private val batch: Batch,
     override fun show() {
         // start the playback of the background music when we enter game screen
         //assets[MusicAssets.Song].play()
+        gameEventManager.addInputListener(this)
 
         hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitRed270"))
         hitboxHa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))

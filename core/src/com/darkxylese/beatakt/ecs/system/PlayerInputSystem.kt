@@ -48,6 +48,11 @@ class PlayerInputSystem(private val gameEventManager: GameEventManager, engine: 
                     order = Move.FOUR
                 }
             }
+            Key.NONE -> entities.forEach{
+                with(it.moveCmp) {
+                    order = Move.NONE
+                }
+            }
         }
     }
 

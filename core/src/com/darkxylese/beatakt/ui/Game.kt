@@ -44,6 +44,8 @@ class Game : KtxGame<KtxScreen>() {
                 bindSingleton(PooledEngine())
             }
 
+            Gdx.input.inputProcessor = InputMultiplexer(gameEventManager)
+
             addScreen(
                 LoadingScreen(
                         this@Game, // game instance to switch screens
@@ -57,7 +59,6 @@ class Game : KtxGame<KtxScreen>() {
             )
             setScreen<LoadingScreen>()
 
-            //Gdx.input.inputProcessor = InputMultiplexer(gameEventManager, ctx.inject<Stage>())
         }
 
         //super.create()

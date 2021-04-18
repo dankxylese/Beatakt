@@ -29,7 +29,7 @@ class SpawnSystem(hitbox: Entity, assets: AssetManager) : IntervalSystem(MathUti
             }
             with<TransformComponent> { bounds.set((MathUtils.random(0, 3))*270f, 1920f, 270f, 270f) } //spawns the random hit block
             with<HitMoveComponent> { speed.set(0f, -1000f) } //speed of the hit
-            with<CollisionComponent>() //attach collision component to be able to click it
+            with<HitCollisionComponent>() //attach collision component to be able to click it
             with<IdComponent> { id = createdTotal }
         }
         scoreCmp.currentObjects.add(createdTotal)

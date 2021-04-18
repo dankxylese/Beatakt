@@ -14,6 +14,11 @@ class PlayerMoveComponent : Component {
         val mapper = mapperFor<PlayerMoveComponent>()
     }
     var order = Move.NONE
+    val cooldown = 0.2f
+    var cooldown1 = 0f
+    var cooldown2 = 0f
+    var cooldown3 = 0f
+    var cooldown4 = 0f
 
 }
 
