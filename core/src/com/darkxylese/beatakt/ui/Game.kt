@@ -24,13 +24,15 @@ class Game : KtxGame<KtxScreen>() {
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
 
+
         context.register {
             bindSingleton(this@Game)
             bindSingleton<Batch>(SpriteBatch())
             bindSingleton(BitmapFont())
             bindSingleton(AssetManager())
             //bindSingleton(OrthographicCamera().apply { setToOrtho(false, 720f, 1280f) })
-            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 512f, 910f) })
+            //bindSingleton(OrthographicCamera().apply { setToOrtho(false, 512f, 910f) })
+            bindSingleton(OrthographicCamera().apply { setToOrtho(false, 1080f, 1920f) })
             bindSingleton(PooledEngine())
 
             addScreen(LoadingScreen(inject(), inject(), inject(), inject(), inject()))

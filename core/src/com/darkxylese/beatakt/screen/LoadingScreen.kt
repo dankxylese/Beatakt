@@ -26,6 +26,8 @@ class LoadingScreen(private val game: Game,
     }
 
     override fun render(delta: Float) {
+        font.data.setScale(2.5f)
+
         // continue loading our assets
         assets.update()
 

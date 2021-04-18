@@ -30,8 +30,8 @@ class RenderSystem(hitbox: Entity,
         // draw all entities in one batch
         batch.use {
             super.update(deltaTime)
-            font.draw(batch, "Hits: ${scoreCmp.hits}  ｜  Score: ${scoreCmp.score}  ｜  Streak : ${scoreCmp.streak} ｜｜ 300s: ${scoreCmp.s300count}  ｜ 100s: ${scoreCmp.s100count} ｜ 50s: ${scoreCmp.s50count} ｜  0s: ${scoreCmp.s0count}", 0f, 910f)
-            font.draw(batch, "Accuracy: ${scoreCmp.accuracy}", 180f, 800f)
+            font.draw(batch, "Hits: ${scoreCmp.hits}  ｜  Score: ${scoreCmp.score}  ｜  Streak : ${scoreCmp.streak} ｜｜ 300s: ${scoreCmp.s300count}  ｜ 100s: ${scoreCmp.s100count} ｜ 50s: ${scoreCmp.s50count} ｜  0s: ${scoreCmp.s0count}", 20f, 1920f)
+            font.draw(batch, "Accuracy: ${scoreCmp.accuracy}", 390f, 1750f)
         }
     }
 

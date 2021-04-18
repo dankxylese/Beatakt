@@ -27,32 +27,34 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
             //calculate time bounds depending on falling rate
             val moveComponentCache = entity[MoveComponent.mapper]
 
-            var speed = (if (moveComponentCache?.speed?.y != null) moveComponentCache.speed.y * -0.005 else null) //float of speed (of entity) in the 200 scale # 600 would result in speed = 3
+            var speed = (if (moveComponentCache?.speed?.y != null) moveComponentCache.speed.y * -0.002 else null) //float of speed (of entity) in the 200 scale # 600 would result in speed = 3
 
             //TODO: for multiple screen size compatibility, take time to travel the whole screen size, then calculate 3/4 of it, and place the hitbox 1/4 of the screen from the bottom.
 
-            //speed 200 BASELINE TEMPORARY
+            //speed 500 BASELINE TEMPORARY
             val adjustDelay = 0 //TODO: TAKE OUT OF THIS SYSTEM AND ADD TO USER DATA AS A USER CHANGEABLE VARIABLE
+
+
             val veryEarly = Vector2()
-            veryEarly.x = 3.48F
-            veryEarly.y = 3.60F
+            veryEarly.x = 2.87F
+            veryEarly.y = 3.03F
             val early = Vector2()
-            early.x = 3.60F
-            early.y = 3.76F
+            early.x = 3.03F
+            early.y = 3.18F
             val perfect = Vector2()
-            perfect.x = 3.76F
-            perfect.y = 3.95F
+            perfect.x = 3.18F
+            perfect.y = 3.32F
             val late = Vector2()
-            late.x = 3.95F
-            late.y = 4.11F
+            late.x = 3.32F
+            late.y = 3.47F
             val veryLate = Vector2()
-            veryLate.x = 4.11F
-            veryLate.y = 4.23F
+            veryLate.x = 3.47F
+            veryLate.y = 3.62F
 
 
 
 
-            if (Gdx.input.justTouched()) { //TODO: detect if this is the first touched entity, if yes then work on that. (ENABLES very quick beatmaps/speeds)
+            if (Gdx.input.justTouched()) {
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     if (transform.bounds.y < 0) {
                         render.timeSinceCreation = 0f //clean time for when entity gets reused
@@ -63,7 +65,8 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
                         }
                     }
                     if (transform.bounds.overlaps(hitboxCollisionBox)) {
-                       // log.debug { render.timeSinceCreation.toString() }
+                        log.debug { render.timeSinceCreation.toString() }
+                        log.debug { speed.toString() }
 
                            //add appropriate score if hit
                         if (render.timeSinceCreation >= (veryEarly.x + adjustDelay) / speed!! && render.timeSinceCreation < (veryEarly.y + adjustDelay) / speed){ //very early 50
@@ -130,11 +133,11 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
     fun popObject(entity: Entity) : Boolean { //pops the first object from object tracker
 
         entity[IdComponent.mapper]?.let { ID ->
-            log.debug {ID.id.toString()}
-            log.debug {scoreCmp.currentObjects.peek().toString()}
+            //log.debug {ID.id.toString()}
+            //log.debug {scoreCmp.currentObjects.peek().toString()}
             return if (scoreCmp.currentObjects.peek() == ID.id){
                 scoreCmp.currentObjects.remove()
-                log.debug {"Removed object"}
+                //log.debug {"Removed object"}
                 true
             } else {
                 log.debug {"Failed to remove // BUG"}

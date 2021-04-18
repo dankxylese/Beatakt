@@ -1,0 +1,27 @@
+
+GameElements.png
+size: 1024, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+hit270
+  rotate: false
+  xy: 546, 2
+  size: 270, 270
+  orig: 270, 270
+  offset: 0, 0
+  index: -1
+hitRed270
+  rotate: false
+  xy: 2, 2
+  size: 270, 270
+  orig: 270, 270
+  offset: 0, 0
+  index: -1
+hitboxUnifiedCentered270
+  rotate: false
+  xy: 274, 2
+  size: 270, 270
+  orig: 270, 270
+  offset: 0, 0
+  index: -1

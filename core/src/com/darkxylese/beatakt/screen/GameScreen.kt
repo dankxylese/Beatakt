@@ -28,31 +28,32 @@ class GameScreen(private val batch: Batch,
                  private val camera: OrthographicCamera,
                  private val engine: PooledEngine) : KtxScreen {
 
+
     private val hitbox = engine.entity {
         with<ScoreComponent>()
-        with<TransformComponent> { bounds.set(0f, 144f, 128f, 224f) }
-        with<TransformCollisionComponent> { bounds.set(0f, 144f, 60f, 224f) }
+        with<TransformComponent> { bounds.set(0f, 304f, 270f, 473f) }
+        with<TransformCollisionComponent> { bounds.set(0f, 304f, 200f, 224f) }
         with<MoveComponent>()
         with<RenderComponent> { set(0, true) }
     }
     private val hitboxHa = engine.entity {
         with<ScoreComponent>()
-        with<TransformComponent> { bounds.set(0f, 144f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(0f, 304f, 270f, 270f) }
         with<RenderComponent>() { z = 2 }
     }
     private val hitboxHb = engine.entity {
         with<ScoreComponent>()
-        with<TransformComponent> { bounds.set(128f, 144f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(270f, 304f, 270f, 270f) }
         with<RenderComponent>() { z = 2 }
     }
     private val hitboxHc = engine.entity {
         with<ScoreComponent>()
-        with<TransformComponent> { bounds.set(256f, 144f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(540f, 304f, 270f, 270f) }
         with<RenderComponent>() { z = 2 }
     }
     private val hitboxHd = engine.entity {
         with<ScoreComponent>()
-        with<TransformComponent> { bounds.set(384f, 144f, 128f, 128f) }
+        with<TransformComponent> { bounds.set(810f, 304f, 270f, 270f) }
         with<RenderComponent>() { z = 2 }
     }
 
@@ -61,9 +62,11 @@ class GameScreen(private val batch: Batch,
     private val touchPos = Vector3()
 
     override fun render(delta: Float) {
+        font.data.setScale(2.5f)
+
         Gdx.input.inputProcessor = object : InputAdapter() {
             override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-                log.debug{"X: $screenX, Y: $screenY"}
+                //log.debug{"X: $screenX, Y: $screenY"}
 
                 return true
             }
@@ -103,11 +106,11 @@ class GameScreen(private val batch: Batch,
         // start the playback of the background music when we enter game screen
         //assets[MusicAssets.Song].play()
 
-        hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitRed"))
-        hitboxHa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered"))
-        hitboxHb[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered"))
-        hitboxHc[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered"))
-        hitboxHd[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered"))
+        hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitRed270"))
+        hitboxHa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))
+        hitboxHb[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))
+        hitboxHc[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))
+        hitboxHd[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))
 
         // init entity engine
         engine.apply {
