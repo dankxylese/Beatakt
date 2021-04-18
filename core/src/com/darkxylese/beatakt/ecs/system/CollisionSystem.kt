@@ -25,7 +25,7 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
             render.timeSinceCreation += deltaTime
 
             //calculate time bounds depending on falling rate
-            val moveComponentCache = entity[MoveComponent.mapper]
+            val moveComponentCache = entity[HitMoveComponent.mapper]
 
             var speed = (if (moveComponentCache?.speed?.y != null) moveComponentCache.speed.y * -0.002 else null) //float of speed (of entity) in the 200 scale # 600 would result in speed = 3
 
@@ -65,8 +65,7 @@ class CollisionSystem(hitbox: Entity, assets: AssetManager) : IteratingSystem(al
                         }
                     }
                     if (transform.bounds.overlaps(hitboxCollisionBox)) {
-                        log.debug { render.timeSinceCreation.toString() }
-                        log.debug { speed.toString() }
+                        //log.debug { render.timeSinceCreation.toString() }
 
                            //add appropriate score if hit
                         if (render.timeSinceCreation >= (veryEarly.x + adjustDelay) / speed!! && render.timeSinceCreation < (veryEarly.y + adjustDelay) / speed){ //very early 50

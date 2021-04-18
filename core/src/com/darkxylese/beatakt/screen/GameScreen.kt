@@ -2,7 +2,6 @@ package com.darkxylese.beatakt.screen
 
 import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -12,10 +11,7 @@ import com.badlogic.gdx.math.Vector3
 import com.darkxylese.beatakt.assets.TextureAtlasAssets
 import com.darkxylese.beatakt.assets.get
 import com.darkxylese.beatakt.ecs.component.*
-import com.darkxylese.beatakt.ecs.system.CollisionSystem
-import com.darkxylese.beatakt.ecs.system.MoveSystem
-import com.darkxylese.beatakt.ecs.system.RenderSystem
-import com.darkxylese.beatakt.ecs.system.SpawnSystem
+import com.darkxylese.beatakt.ecs.system.*
 import ktx.app.KtxScreen
 import ktx.ashley.*
 import ktx.log.logger
@@ -33,7 +29,7 @@ class GameScreen(private val batch: Batch,
         with<ScoreComponent>()
         with<TransformComponent> { bounds.set(0f, 304f, 270f, 473f) }
         with<TransformCollisionComponent> { bounds.set(0f, 304f, 200f, 224f) }
-        with<MoveComponent>()
+        with<PlayerMoveComponent>()
         with<RenderComponent> { set(0, true) }
     }
     private val hitboxHa = engine.entity {
@@ -66,7 +62,7 @@ class GameScreen(private val batch: Batch,
 
         Gdx.input.inputProcessor = object : InputAdapter() {
             override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-                //log.debug{"X: $screenX, Y: $screenY"}
+                log.debug{"X: $screenX, Y: $screenY"}
 
                 return true
             }
@@ -91,11 +87,6 @@ class GameScreen(private val batch: Batch,
             } //not visible to collision system
 
         }
-        when {
-            Gdx.input.isKeyPressed(Input.Keys.LEFT) -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = -200f }
-            Gdx.input.isKeyPressed(Input.Keys.RIGHT) -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = 200f }
-            else -> hitbox[MoveComponent.mapper]?.let { move -> move.speed.x = 0f }
-        }
 
         // everything is now done withing our entity engine --> update it every frame
 
@@ -117,6 +108,8 @@ class GameScreen(private val batch: Batch,
             // add systems
             addSystem(SpawnSystem(hitbox, assets))
             addSystem(MoveSystem())
+            //addSystem(PlayerInputSystem())
+
             addSystem(RenderSystem(hitbox, batch, font, camera))
             // add Collision last since it removes entities
             addSystem(CollisionSystem(hitbox, assets))

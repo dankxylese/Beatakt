@@ -1,11 +1,11 @@
 package com.darkxylese.beatakt.event
 
-import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.utils.Array
+import com.darkxylese.beatakt.input.InputListener
 import ktx.app.KtxInputAdapter
 
 
-enum class key {
+enum class Key {
     ONE, TWO, THREE, FOUR
 }
 class GameEventManager : KtxInputAdapter {
@@ -17,21 +17,29 @@ class GameEventManager : KtxInputAdapter {
 
     fun removeInputListener(listener: InputListener) = inputListeners.removeValue(listener, true)
 
-    fun dispatchInputMoveEvent(percX: Float) {
+    fun dispatchInputKeyPressEvent(key: Key) {
         if (ignoreInput) return
-        //inputListeners.forEach { it.move(percX) }
+        inputListeners.forEach { it.keyPressed(key) }
     }
 
     override fun touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
         if (ignoreInput) return true
 
-        if ((screenX in 1..-1) && (screenY in 1..-1)){
-            dispatchInputMoveEvent(4f)
+        //TODO: For now, Y is limited (>250) so that future UI (Pause Button) is accessible at the very top (<250)
+        if ((screenX in 0..270) && (screenY in 250..1920)){
+            dispatchInputKeyPressEvent(Key.ONE)
+        }
+        if ((screenX in 270..540) && (screenY in 250..1920)){
+            dispatchInputKeyPressEvent(Key.TWO)
+        }
+        if ((screenX in 540..810) && (screenY in 250..1920)){
+            dispatchInputKeyPressEvent(Key.THREE)
+        }
+        if ((screenX in 810..1080) && (screenY in 250..1920)){
+            dispatchInputKeyPressEvent(Key.FOUR)
         }
 
-
-
-        return super.touchDown(screenX, screenY, pointer, button)
+        return true
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {

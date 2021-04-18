@@ -4,9 +4,9 @@ import com.badlogic.ashley.core.Component
 import com.badlogic.gdx.math.Vector2
 import ktx.ashley.mapperFor
 
-class MoveComponent : Component {
+class HitMoveComponent : Component {
     companion object {
-        val mapper = mapperFor<MoveComponent>()
+        val mapper = mapperFor<HitMoveComponent>()
     }
 
     val speed = Vector2() //holder for speed of an object
