@@ -1,5 +1,6 @@
 package com.darkxylese.beatakt.assets
 
+import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.audio.Music
@@ -24,9 +25,12 @@ inline fun AssetManager.load(asset: MusicAssets) = load<Music>(asset.path)
 inline operator fun AssetManager.get(asset: MusicAssets) = getAsset<Music>(asset.path)
 
 // texture atlas
-enum class TextureAtlasAssets(val path: String) {
-    Game("images/GameElements.atlas")
+enum class TextureAtlasAsset (
+    val isSkinAtlas: Boolean,
+    fileName: String,
+    directory: String = "images",
+    val descriptor: AssetDescriptor<TextureAtlas> = AssetDescriptor("$directory/$fileName", TextureAtlas::class.java)
+){
+    GRAPHICS(false, "game.atlas")
+    //UI(true, "ui.atlas", "ui")
 }
-
-inline fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)
-inline operator fun AssetManager.get(asset: TextureAtlasAssets) = getAsset<TextureAtlas>(asset.path)
