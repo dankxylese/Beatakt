@@ -11,6 +11,7 @@ import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
 import java.lang.Float.min
+import com.darkxylese.beatakt.fft
 
 
 private val log = logger<GameScreen>()
@@ -78,6 +79,18 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             } catch (e: IOException) {
             }
         }
+        val test = Gdx.files.externalStoragePath
+        val test1 = Gdx.files.absolute(".").list().size               //Returned 63
+        val test2 = Gdx.files.absolute("./storage").list()        //Returned 4
+        val test3 = Gdx.files.absolute("./storage/self/primary").list()  //Returned 0
+        val files = Gdx.files.external("/Music").list()
+        val song = Gdx.files.external("/Music/Midnight.mp3")
+        ProcessFFT
+        for (file in files) {
+            //log.debug { file.path().toString() }
+            log.debug { file.path().toString() }
+        }
+
 
 
         /*

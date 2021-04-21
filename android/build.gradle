@@ -1,6 +1,7 @@
 android {
     buildToolsVersion "30.0.2"
-    compileSdkVersion 30
+    //noinspection GradleCompatible
+    compileSdkVersion 29
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
