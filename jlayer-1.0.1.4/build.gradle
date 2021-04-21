@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('jlayer-1.0.1.4.jar'))

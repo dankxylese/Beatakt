@@ -7,65 +7,61 @@ import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.darkxylese.beatakt.Beatakt
 import com.darkxylese.beatakt.UNIT_SCALE
-import com.darkxylese.beatakt.ecs.component.GraphicComponent
-import com.darkxylese.beatakt.ecs.component.TransformComponent
+import com.darkxylese.beatakt.ecs.component.*
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
 import ktx.graphics.use
 import ktx.log.debug
 import ktx.log.logger
+import java.lang.Float.min
 
 
 private val log = logger<GameScreen>()
+private const val MAX_DELTA_TIME = 1/30f
 
 class GameScreen(game:Beatakt) : BeataktScreen(game) {
     //private val texture = Texture(Gdx.files.internal("images/boxa.png"))
-    private val hitboxTexture = Texture(Gdx.files.internal("images/hitboxUnifiedCentered270a.png"))
 
+    private val playerHitbox = engine.entity {
+        with<TransformComponent>{
+            position.set(0f,2f,2f)
+        }
+        with<PlayerComponent>()
+        with<GraphicComponent>{id=SpriteIDs.PLAYER}
+    }
+
+    private val hit = engine.entity {
+        with<TransformComponent>{
+
+            position.set(2.25f,10f,0f)
+        }
+        with<GraphicComponent>{id=SpriteIDs.HIT}
+        with<HitMoveComponent> { speed = 2f}
+    }
     private val hitboxA = engine.entity {
         with<TransformComponent>{
-            position.set(0f,2f,0f)
+            position.set(0f,2f,1f)
         }
-        with<GraphicComponent>{
-            sprite.run{
-                setRegion(hitboxTexture)
-                setSize(9f/(1080/270), 16f/(1920/270))
-            }
-        }
+        with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxB = engine.entity {
         with<TransformComponent>{
-            position.set(2.25f,2f,0f)
+            position.set(2.25f,2f,1f)
         }
-        with<GraphicComponent>{
-            sprite.run{
-                setRegion(hitboxTexture)
-                setSize(9f/(1080/270), 16f/(1920/270))
-            }
-        }
+        with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxC = engine.entity {
         with<TransformComponent>{
-            position.set(4.5f,2f,0f)
+            position.set(4.5f,2f,1f)
         }
-        with<GraphicComponent>{
-            sprite.run{
-                setRegion(hitboxTexture)
-                setSize(9f/(1080/270), 16f/(1920/270))
-            }
-        }
+        with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxD = engine.entity {
         with<TransformComponent>{
-            position.set(6.75f,2f,0f)
+            position.set(6.75f,2f,1f)
         }
-        with<GraphicComponent>{
-            sprite.run{
-                setRegion(hitboxTexture)
-                setSize(9f/(1080/270), 16f/(1920/270))
-            }
-        }
+        with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
 
 
@@ -74,10 +70,7 @@ class GameScreen(game:Beatakt) : BeataktScreen(game) {
     }
 
     override fun render(delta: Float) {
-        engine.update(delta)
+        engine.update(min(MAX_DELTA_TIME, delta))
     }
 
-    override fun dispose() {
-        hitboxTexture.dispose()
-    }
 }

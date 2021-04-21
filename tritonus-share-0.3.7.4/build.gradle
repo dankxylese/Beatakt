@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('tritonus-share-0.3.7.4.jar'))
