@@ -74,21 +74,6 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
     override fun show() {
         log.debug { "Game BeataktScreen is Shown" }
 
-        //Test Output
-        /*
-        var outColF: BufferedWriter? = null
-        try {
-            if (!Gdx.files.local("test").exists()) Gdx.files.local("test").mkdirs()
-            if (Gdx.files.local("test/test.bm").exists()) Gdx.files.local("test/test.bm").delete()
-            outColF = BufferedWriter(OutputStreamWriter(Gdx.files.local("test/test.bm").write(true)))
-            outColF.write("test Beatmap")
-        } catch (e: Throwable) {
-        } finally {
-            try {
-                outColF?.close()
-            } catch (e: IOException) {
-            }
-        } */
         var beatMapLocation: FileHandle? = null
         var textD = ""
 
@@ -113,6 +98,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         var resultBand1: MutableList<Float> = ArrayList()
         var resultBand2: MutableList<Float> = ArrayList()
         var resultBand3: MutableList<Float> = ArrayList()
+        var resultBand4: MutableList<Float> = ArrayList()
         var c1 = 0 //counter1
         var largest = 0.0f
         var largestPos = 0
@@ -126,8 +112,11 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             resultBand1.add(0f)
             resultBand2.add(0f)
             resultBand3.add(0f)
+            resultBand4.add(0f)
             c1++
         }
+
+        //pass 1
         c1 = 0
 
         var c3 = 0
@@ -144,7 +133,9 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         minPower = (c3total / c3)*0.29f //filter output
 
         c1 = 0
-        //pass 1
+        largest = 0.0f
+        largestPos = 0
+
         while(c1 < band1.size){
             if (band1[c1] > 0.0f && band1[c1+1] == 0.0f){
                 if(band1[c1] > minPower){resultBand1[c1] = band1[c1]}
@@ -169,6 +160,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                 c1 += c2 - largestPos
                 c2helper = false
                 c2 = 0
+                largest = 0f
+                largestPos = 0
             }
             if (helper){
                 c1++
@@ -201,6 +194,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         minPower = (c3total / c3)*0.29f //filter output
 
         c1 = 0
+        largest = 0.0f
+        largestPos = 0
 
         while(c1 < band2.size){
             if (band2[c1] > 0.0f && band2[c1+1] == 0.0f){
@@ -226,6 +221,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                 c1 += c2 - largestPos
                 c2helper = false
                 c2 = 0
+                largest = 0f
+                largestPos = 0
             }
             if (helper){
                 c1++
@@ -257,6 +254,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         minPower = (c3total / c3)*0.29f //filter output
 
         c1 = 0
+        largest = 0.0f
+        largestPos = 0
 
         while(c1 < band3.size){
             if (band3[c1] > 0.0f && band3[c1+1] == 0.0f){
@@ -282,6 +281,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                 c1 += c2 - largestPos
                 c2helper = false
                 c2 = 0
+                largest = 0f
+                largestPos = 0
             }
             if (helper){
                 c1++
@@ -292,11 +293,51 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             }
         }
 
+        c1 = 0
+        c2 = 0
+        helper = false
+        c2helper = false
+        /*
+        //pass 4
+        while(c1 < resultBand1.size){
+            if (band3[c1] > 0.0f && band3[c1+1] == 0.0f){
+                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                helper = true //help iterate while loop without affecting next if check
+            }
+
+            while (c2 <= 10){
+                if (band3[c1+c2] > largest){
+                    largest = band3[c1+c2]
+                    largestPos = c2
+                }
+                c2++
+            }
+            c2helper = true
+            c1 += largestPos
+
+
+            if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && c2helper) {
+                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                c1 += c2 - largestPos
+                c2helper = false
+                c2 = 0
+                largest = 0f
+                largestPos = 0
+            }
+            if (helper){
+                c1++
+                helper = false
+            }
+            if (band3[c1] == 0.0f){
+                c1++
+            }
+        }
+        */
         //log.debug { result.toString() }
         //log.debug { bands.toString() }
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand3))
+            addSystem(SpawnSystem(resultBand1))
         }
         //val text: String = handle.readString()
 

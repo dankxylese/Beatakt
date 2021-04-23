@@ -21,18 +21,19 @@ import ktx.log.logger
 private val log = logger<SpawnSystem>()
 
 class SpawnSystem(val result: MutableList<Float>) : IntervalSystem( 1/86f) {
-    var intervalCounter = 0
+    var intervalCounter = 334 //4s to account for speed
 
 
     override fun updateInterval() {
 
-        if (result[intervalCounter] > 0f)
-        engine.entity{
-            with<TransformComponent>{
-                position.set(MathUtils.random(0, 3)*2.25f, 16f, 0f)
+        if (result[intervalCounter] > 0f && intervalCounter < result.size-1 && intervalCounter > 7) {
+            engine.entity {
+                with<TransformComponent> {
+                    position.set(MathUtils.random(0, 3) * 2.25f, 16f, 0f)
+                }
+                with<GraphicComponent> { id = SpriteIDs.HIT }
+                with<HitMoveComponent> { speed = 4f }
             }
-            with<GraphicComponent>{id= SpriteIDs.HIT}
-            with<HitMoveComponent> { speed = 4f}
         }
 
         intervalCounter++
