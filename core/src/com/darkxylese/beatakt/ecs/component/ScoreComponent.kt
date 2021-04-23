@@ -1,6 +1,7 @@
 package com.darkxylese.beatakt.ecs.component
 
 import com.badlogic.ashley.core.Component
+import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Pool
 import ktx.ashley.mapperFor
 import java.util.*
@@ -10,6 +11,9 @@ class ScoreComponent : Component, Pool.Poolable {
     var hits = 0 //total
     var score = 0
     var accuracy = ""
+    var beatMapName = ""
+    var beatMapLoc: FileHandle? = null
+    var beatSongLoc: FileHandle? = null
 
     var s0count = 0
     var s50count = 0
@@ -27,6 +31,9 @@ class ScoreComponent : Component, Pool.Poolable {
         s100count = 0
         s300count = 0
         streak = 0
+        beatMapName = ""
+        beatMapLoc = null
+        beatSongLoc = null
         currentObjects.clear()
     }
 

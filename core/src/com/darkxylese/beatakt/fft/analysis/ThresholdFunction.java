@@ -1,4 +1,4 @@
-package com.badlogic.audio.analysis;
+package com.darkxylese.beatakt.fft.analysis;
 
 import java.util.ArrayList;
 import java.util.List;

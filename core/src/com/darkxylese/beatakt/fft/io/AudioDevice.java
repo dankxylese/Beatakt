@@ -1,11 +1,11 @@
-package com.badlogic.audio.io;
+package com.darkxylese.beatakt.fft.io;
 
 import java.io.FileInputStream;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.AudioFormat.Encoding;
 
 
 /**

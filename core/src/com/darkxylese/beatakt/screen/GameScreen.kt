@@ -1,24 +1,33 @@
 package com.darkxylese.beatakt.screen
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.math.Vector3
 import com.darkxylese.beatakt.Beatakt
 import com.darkxylese.beatakt.ecs.component.*
+import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import ktx.ashley.entity
+import ktx.ashley.get
 import ktx.ashley.with
 import ktx.log.debug
 import ktx.log.logger
-import java.io.BufferedWriter
-import java.io.IOException
-import java.io.OutputStreamWriter
 import java.lang.Float.min
-import com.darkxylese.beatakt.fft
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 private val log = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1/30f
 
 class GameScreen(game: Beatakt) : BeataktScreen(game) {
-    //private val texture = Texture(Gdx.files.internal("images/boxa.png"))
+
+    private val score = engine.entity {
+        with<ScoreComponent>{
+            beatMapLoc = Gdx.files.external("Beatakt/AndIMayCry.bm")
+            beatMapName = "AndIMayCry"
+            beatSongLoc = Gdx.files.external("/Music/AndIMayCry.mp3")
+        }
+    }
 
     private val playerHitbox = engine.entity {
         with<TransformComponent>{
@@ -27,7 +36,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         with<PlayerComponent>()
         with<GraphicComponent>{id=SpriteIDs.PLAYER}
     }
-
+        /*
     private val hit = engine.entity {
         with<TransformComponent>{
 
@@ -35,7 +44,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         }
         with<GraphicComponent>{id=SpriteIDs.HIT}
         with<HitMoveComponent> { speed = 2f}
-    }
+    }   */
     private val hitboxA = engine.entity {
         with<TransformComponent>{
             position.set(0f, 2f, 1f)
@@ -66,6 +75,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         log.debug { "Game BeataktScreen is Shown" }
 
         //Test Output
+        /*
         var outColF: BufferedWriter? = null
         try {
             if (!Gdx.files.local("test").exists()) Gdx.files.local("test").mkdirs()
@@ -78,45 +88,217 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                 outColF?.close()
             } catch (e: IOException) {
             }
-        }
-        val test = Gdx.files.externalStoragePath
-        val test1 = Gdx.files.absolute(".").list().size               //Returned 63
-        val test2 = Gdx.files.absolute("./storage").list()        //Returned 4
-        val test3 = Gdx.files.absolute("./storage/self/primary").list()  //Returned 0
-        val files = Gdx.files.external("/Music").list()
-        val song = Gdx.files.external("/Music/Midnight.mp3")
-        ProcessFFT
-        for (file in files) {
-            //log.debug { file.path().toString() }
-            log.debug { file.path().toString() }
-        }
-
-
-
-        /*
-        val selection: String = MediaStore.Audio.Media.IS_MUSIC + " != 0"
-
-
-        val projection = arrayOf<String>(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.DURATION
-        )
-
-        cursor = this.managedQuery(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                selection,
-                null,
-                null)
-
-        val songs: MutableList<String> = ArrayList()
-        while (cursor.moveToNext()) {
-            songs.add(cursor.getString(0).toString() + "||" + cursor.getString(1) + "||" + cursor.getString(2) + "||" + cursor.getString(3) + "||" + cursor.getString(4) + "||" + cursor.getString(5))
         } */
+        var beatMapLocation: FileHandle? = null
+        var textD = ""
+
+
+        score[ScoreComponent.mapper].let { score ->
+            if (score != null) {
+                beatMapLocation = score.beatMapLoc
+            }
+        }
+
+        if (beatMapLocation != null){
+            textD = beatMapLocation!!.readString()
+        }
+        val bands = textD.split(";").toTypedArray() //3 bands of analysed frequencies
+        var band1String = bands[0].split(",").toTypedArray()
+        val band1 = band1String.map { it.toFloat() }
+        var band2String = bands[1].split(",").toTypedArray()
+        val band2 = band2String.map { it.toFloat() }
+        var band3String = bands[2].split(",").toTypedArray()
+        val band3 = band3String.map { it.toFloat() }
+
+        var resultBand1: MutableList<Float> = ArrayList()
+        var resultBand2: MutableList<Float> = ArrayList()
+        var resultBand3: MutableList<Float> = ArrayList()
+        var c1 = 0 //counter1
+        var largest = 0.0f
+        var largestPos = 0
+        var c2 = 0
+        var helper = false
+        var c2helper = false
+        var minPower = 0f
+
+
+        while(c1 < band1.size){ //fill result with empty
+            resultBand1.add(0f)
+            resultBand2.add(0f)
+            resultBand3.add(0f)
+            c1++
+        }
+        c1 = 0
+
+        var c3 = 0
+        var c3total = 0f
+
+        while(c1 < band1.size){
+            if (band1[c1] > 30f){
+                c3++
+                c3total += band1[c1]
+            }
+            c1++
+        }
+
+        minPower = (c3total / c3)*0.29f //filter output
+
+        c1 = 0
+        //pass 1
+        while(c1 < band1.size){
+            if (band1[c1] > 0.0f && band1[c1+1] == 0.0f){
+                if(band1[c1] > minPower){resultBand1[c1] = band1[c1]}
+                helper = true //help iterate while loop without affecting next if check
+            }
+
+            if (band1[c1] > 0.0f && band1[c1+1] > 0.0f && !c2helper) {
+                while (band1[c1+c2] > 0.0f){
+                    if (band1[c1+c2] > largest){
+                        largest = band1[c1+c2]
+                        largestPos = c2
+                    }
+                    c2++
+                }
+                c2helper = true
+                c1 += largestPos
+
+            }
+
+            if (band1[c1] > 0.0f && band1[c1+1] > 0.0f && c2helper) {
+                if(band1[c1] > minPower){resultBand1[c1] = band1[c1]}
+                c1 += c2 - largestPos
+                c2helper = false
+                c2 = 0
+            }
+            if (helper){
+                c1++
+                helper = false
+            }
+            if (band1[c1] == 0.0f){
+                c1++
+            }
+        }
+
+
+        //pass 2
+
+        c1 = 0
+        c2 = 0
+        helper = false
+        c2helper = false
+        c3 = 0
+        c3total = 0f
+
+
+        while(c1 < band2.size){
+            if (band2[c1] > 10f){
+                c3++
+                c3total += band2[c1]
+            }
+            c1++
+        }
+
+        minPower = (c3total / c3)*0.29f //filter output
+
+        c1 = 0
+
+        while(c1 < band2.size){
+            if (band2[c1] > 0.0f && band2[c1+1] == 0.0f){
+                if(band2[c1] > minPower){resultBand2[c1] = band2[c1]}
+                helper = true //help iterate while loop without affecting next if check
+            }
+
+            if (band2[c1] > 0.0f && band2[c1+1] > 0.0f && !c2helper) {
+                while (band2[c1+c2] > 0.0f){
+                    if (band2[c1+c2] > largest){
+                        largest = band2[c1+c2]
+                        largestPos = c2
+                    }
+                    c2++
+                }
+                c2helper = true
+                c1 += largestPos
+
+            }
+
+            if (band2[c1] > 0.0f && band2[c1+1] > 0.0f && c2helper) {
+                if(band2[c1] > minPower){resultBand2[c1] = band2[c1]}
+                c1 += c2 - largestPos
+                c2helper = false
+                c2 = 0
+            }
+            if (helper){
+                c1++
+                helper = false
+            }
+            if (band2[c1] == 0.0f){
+                c1++
+            }
+        }
+
+        //pass 3
+
+        c1 = 0
+        c2 = 0
+        helper = false
+        c2helper = false
+        c3 = 0
+        c3total = 0f
+
+
+        while(c1 < band3.size){
+            if (band3[c1] > 10f){
+                c3++
+                c3total += band3[c1]
+            }
+            c1++
+        }
+
+        minPower = (c3total / c3)*0.29f //filter output
+
+        c1 = 0
+
+        while(c1 < band3.size){
+            if (band3[c1] > 0.0f && band3[c1+1] == 0.0f){
+                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                helper = true //help iterate while loop without affecting next if check
+            }
+
+            if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && !c2helper) {
+                while (band3[c1+c2] > 0.0f){
+                    if (band3[c1+c2] > largest){
+                        largest = band3[c1+c2]
+                        largestPos = c2
+                    }
+                    c2++
+                }
+                c2helper = true
+                c1 += largestPos
+
+            }
+
+            if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && c2helper) {
+                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                c1 += c2 - largestPos
+                c2helper = false
+                c2 = 0
+            }
+            if (helper){
+                c1++
+                helper = false
+            }
+            if (band3[c1] == 0.0f){
+                c1++
+            }
+        }
+
+        //log.debug { result.toString() }
+        //log.debug { bands.toString() }
+
+        engine.apply {
+            addSystem(SpawnSystem(resultBand3))
+        }
+        //val text: String = handle.readString()
 
 
     }

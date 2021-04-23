@@ -12,6 +12,7 @@ import ktx.ashley.allOf
 import ktx.ashley.exclude
 import ktx.ashley.get
 import ktx.graphics.use
+import ktx.log.debug
 import ktx.log.error
 import ktx.log.logger
 
@@ -25,14 +26,16 @@ class RenderSystem(
         allOf(TransformComponent::class, GraphicComponent::class).exclude(RemoveComponent::class).get(),
         compareBy { entity -> entity[TransformComponent.mapper] }
 ){
-
+    var timeSinceCreation = 0f
     override fun update(deltaTime: Float) {
+
         forceSort()
         gameViewport.apply()
         batch.use(gameViewport.camera.combined){
             super.update(deltaTime)
         }
-
+        //timeSinceCreation += deltaTime
+        //log.debug { "Time since creation $timeSinceCreation" }
     }
 
 

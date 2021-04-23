@@ -1,4 +1,8 @@
-package com.badlogic.audio.io;
+package com.darkxylese.beatakt.fft.io;
+
+import org.tritonus.share.TDebug;
+import org.tritonus.share.sampled.FloatSampleBuffer;
+import org.tritonus.share.sampled.file.TAudioFileReader;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -18,10 +22,6 @@ import javazoom.spi.mpeg.sampled.file.MpegAudioFileFormat;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFormat;
 import javazoom.spi.mpeg.sampled.file.MpegEncoding;
 import javazoom.spi.mpeg.sampled.file.MpegFileFormatType;
-
-import org.tritonus.share.TDebug;
-import org.tritonus.share.sampled.FloatSampleBuffer;
-import org.tritonus.share.sampled.file.TAudioFileReader;
 
 /**
  * Another mp3 decoder. I got a suspicion that the other one sucks a bit :/

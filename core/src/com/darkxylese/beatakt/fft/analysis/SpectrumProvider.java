@@ -1,6 +1,6 @@
-package com.badlogic.audio.analysis;
+package com.darkxylese.beatakt.fft.analysis;
 
-import com.badlogic.audio.io.Decoder;
+import com.darkxylese.beatakt.fft.io.Decoder;
 
 /**
  * Provides float[] arrays of successive spectrum frames retrieved via
@@ -13,7 +13,7 @@ import com.badlogic.audio.io.Decoder;
 public class SpectrumProvider 
 {
 	/** the decoder to use **/
-	private final Decoder decoder;	
+	private final Decoder decoder;
 	
 	/** the current sample array **/
 	private float[] samples;
@@ -31,39 +31,39 @@ public class SpectrumProvider
 	private final int hopSize;
 	
 	/** the fft **/
-	private final FFT fft;	
-	
+	private final FFT fft;
+
 	/**
 	 * Constructor, sets the {@link Decoder}, the sample window size and the
 	 * hop size for the spectra returned. Say the sample window size is 1024
 	 * samples. To get an overlapp of 50% you specify a hop size of 512 samples,
 	 * for 25% overlap you specify a hopsize of 256 and so on. Hop sizes are of
-	 * course not limited to powers of 2. 
-	 * 
+	 * course not limited to powers of 2.
+	 *
 	 * @param decoder The decoder to get the samples from.
 	 * @param sampleWindowSize The sample window size.
 	 * @param hopSize The hop size.
 	 * @param useHamming Wheter to use hamming smoothing or not.
 	 */
-	public SpectrumProvider( Decoder decoder, int sampleWindowSize, int hopSize, boolean useHamming )
+	public SpectrumProvider(Decoder decoder, int sampleWindowSize, int hopSize, boolean useHamming )
 	{
 		if( decoder == null )
 			throw new IllegalArgumentException( "Decoder must be != null" );
-		
+
 		if( sampleWindowSize <= 0 )
 			throw new IllegalArgumentException( "Sample window size must be > 0" );
 		if( hopSize <= 0 )
 			throw new IllegalArgumentException( "Hop size must be > 0" );
-		
+
 		if( sampleWindowSize < hopSize )
 			throw new IllegalArgumentException( "Hop size must be <= sampleSize" );
-		
-		
-		this.decoder = decoder;		
+
+
+		this.decoder = decoder;
 		this.samples = new float[sampleWindowSize];
 		this.nextSamples = new float[sampleWindowSize];
 		this.tempSamples = new float[sampleWindowSize];
-		this.hopSize = hopSize;			
+		this.hopSize = hopSize;
 		fft = new FFT( sampleWindowSize, 44100 );
 		if( useHamming )
 			fft.window(FFT.HAMMING);

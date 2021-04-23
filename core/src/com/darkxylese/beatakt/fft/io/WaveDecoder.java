@@ -1,4 +1,4 @@
-package com.badlogic.audio.io;
+package com.darkxylese.beatakt.fft.io;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -15,7 +15,7 @@ import java.io.InputStream;
  * @author mzechner
  *
  */
-public class WaveDecoder implements com.badlogic.audio.io.Decoder
+public class WaveDecoder implements Decoder
 {
 	/** inverse max short value as float **/
 	private final float MAX_VALUE = 1.0f / Short.MAX_VALUE;
@@ -43,7 +43,7 @@ public class WaveDecoder implements com.badlogic.audio.io.Decoder
 		if( stream == null )
 			throw new IllegalArgumentException( "Input stream must not be null" );
 		
-		in = new EndianDataInputStream( new BufferedInputStream( stream, 1024*1024) );		
+		in = new EndianDataInputStream( new BufferedInputStream( stream, 1024*1024) );
 		if( !in.read4ByteString().equals( "RIFF" ) )
 			throw new IllegalArgumentException( "not a wav" );
 		

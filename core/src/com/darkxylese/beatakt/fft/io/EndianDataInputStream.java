@@ -1,4 +1,4 @@
-package com.badlogic.audio.io;
+package com.darkxylese.beatakt.fft.io;
 
 import java.io.DataInputStream;
 import java.io.InputStream;

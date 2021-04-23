@@ -1,33 +1,28 @@
-package com.badlogic.audio.samples.part7;
+package com.darkxylese.beatakt.fft;
+
+import com.darkxylese.beatakt.fft.analysis.SpectrumProvider;
+import com.darkxylese.beatakt.fft.analysis.ThresholdFunction;
+import com.darkxylese.beatakt.fft.io.MP3Decoder;
+import com.darkxylese.beatakt.fft.visualization.PlaybackVisualizer;
+import com.darkxylese.beatakt.fft.visualization.Plot;
+
 
 import java.awt.Color;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.audio.analysis.SpectrumProvider;
-import com.badlogic.audio.analysis.ThresholdFunction;
-import com.badlogic.audio.io.MP3Decoder;
-import com.badlogic.audio.visualization.PlaybackVisualizer;
-import com.badlogic.audio.visualization.Plot;
-
 public class MultiBandThreshold
-	/*
-		TODO: Calculate the difference between spectralFlux and thresholds Arrays of Arrays. Output it in an array file.
-	 */
 {
-	public static final String FILE = "android/assets/samples/Midnight.mp3";
+
+	// TODO: SpectralFlux -> SignalFluctuations
+	public static final String FILE = "/home/manse/Beatakt/Songs/AndIMayCry.mp3";
 	public static final int HOP_SIZE = 512;
-	public static final int HISTORY_SIZE = 30;
+	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
 	public static final float[] bands = { 80, 4000, 4000, 10000, 10000, 16000 };
 	
@@ -79,7 +74,7 @@ public class MultiBandThreshold
 		outputFile(spectralFlux, thresholds, decoder.getDuration());
 
 
-		Plot plot = new Plot( "Spectral Flux", 1024, 512 );
+		Plot plot = new Plot( "SignalFluctuations", 1024, 512 );
 		for( int i = 0; i < bands.length / 2; i++ )
 		{
 			plot.plot( spectralFlux.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
@@ -88,14 +83,14 @@ public class MultiBandThreshold
 		
 		new PlaybackVisualizer( plot, HOP_SIZE, new MP3Decoder( new FileInputStream( FILE ) ) );
 
+
 	}
 
 	static public void outputFile(List<List<Float>> spectralFlux, List<List<Float>> thresholds, int duration){
 		try{
-		RandomAccessFile stream = new RandomAccessFile("android/assets/testOutput/test1.txt", "rw");
+		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/AndIMayCry.bm", "rw");
 		stream.setLength(0); //clear file before hand
 		FileChannel channel = stream.getChannel();
-		outputFileHelper(channel, "{");
 		int k = 0;
 
 		for( int i = 0; i < bands.length; i+=2 ){ //for each band
@@ -110,7 +105,8 @@ public class MultiBandThreshold
 			}
 
 			stream.setLength(stream.length() - 1);
-			outputFileHelper(channel, "}" + k + "\n");
+			//outputFileHelper(channel, ";" + k + "\n");
+			outputFileHelper(channel, ";");
 		}
 
 

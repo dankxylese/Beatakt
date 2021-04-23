@@ -1,9 +1,9 @@
-package com.badlogic.audio.visualization;
+package com.darkxylese.beatakt.fft.visualization;
 
 import java.awt.Color;
 
-import com.badlogic.audio.io.AudioDevice;
-import com.badlogic.audio.io.Decoder;
+import com.darkxylese.beatakt.fft.io.AudioDevice;
+import com.darkxylese.beatakt.fft.io.Decoder;
 
 /**
  * Takes a plot and a decoder and plays back the audio

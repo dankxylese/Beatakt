@@ -1,4 +1,4 @@
-package com.badlogic.audio.analysis;
+package com.darkxylese.beatakt.fft.analysis;
 
 /**
  * Some signal metric functions like energy, power etc.

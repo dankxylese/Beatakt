@@ -1,4 +1,4 @@
-package com.badlogic.audio.io;
+package com.darkxylese.beatakt.fft.io;
 
 /**
  * Interface for audio decoders that return successive
@@ -16,5 +16,5 @@ public interface Decoder
 	 * 
 	 * @param samples The number of read samples.
 	 */
-	public int readSamples( float[] samples );
+	public int readSamples(float[] samples);
 }

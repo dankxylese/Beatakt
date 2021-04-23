@@ -1,4 +1,4 @@
-package com.badlogic.audio.visualization;
+package com.darkxylese.beatakt.fft.visualization;
 
 import java.awt.Color;
 import java.awt.Dimension;
