@@ -17,20 +17,13 @@ import java.io.InputStream;
  */
 public class WaveDecoder implements Decoder
 {
-	/** inverse max short value as float **/
-	private final float MAX_VALUE = 1.0f / Short.MAX_VALUE;
-	
+
 	/** the input stream we read from **/
 	private final EndianDataInputStream in;
 	
 	/** number of channels **/
 	private final int channels;
-	
-	/** sample rate in Herz**/
-	private final float sampleRate;
-	
-	/** **/
-	
+
 	/**
 	 * Constructor, sets the input stream to read
 	 * the Wav file from.
@@ -62,7 +55,8 @@ public class WaveDecoder implements Decoder
 			throw new IllegalArgumentException( "expected format to be 1" );
 		
 		channels = in.readShortLittleEndian();
-		sampleRate = in.readIntLittleEndian();
+		/** sample rate in Herz**/
+		float sampleRate = in.readIntLittleEndian();
 		if( sampleRate != 44100 )
 			throw new IllegalArgumentException( "Not 44100 sampling rate" );
 		in.readIntLittleEndian();
@@ -98,6 +92,8 @@ public class WaveDecoder implements Decoder
 				for( int j = 0; j < channels; j++ )
 				{
 					int shortValue = in.readShortLittleEndian( );
+					/** inverse max short value as float **/
+					float MAX_VALUE = 1.0f / Short.MAX_VALUE;
 					sample += (shortValue * MAX_VALUE);
 				}
 				sample /= channels;

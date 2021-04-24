@@ -104,7 +104,7 @@ public class DFT extends FourierTransform
     imag[N / 2] = -imag[0] / (N / 2);
     for (int i = 0; i < N / 2; i++)
     {
-      real[i] /= (N / 2);
+      real[i] /= ((double) N / 2);
       imag[i] = -imag[i] / (N / 2);
     }
     for (int t = 0; t < N; t++)

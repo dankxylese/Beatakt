@@ -161,23 +161,6 @@ public class FFT extends FourierTransform
     fillSpectrum();
   }
 
-  /**
-   * Performs a forward transform on the passed buffers.
-   * 
-   * @param buffReal the real part of the time domain signal to transform
-   * @param buffImag the imaginary part of the time domain signal to transform
-   */
-  public void forward(float[] buffReal, float[] buffImag)
-  {
-    if (buffReal.length != timeSize || buffImag.length != timeSize)
-    {
-    	throw new IllegalArgumentException("FFT.forward: The length of the passed buffers must be equal to timeSize().");
-    }
-    setComplex(buffReal, buffImag);
-    bitReverseComplex();
-    fft();
-    fillSpectrum();
-  }
 
   public void inverse(float[] buffer)
   {

@@ -199,7 +199,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
         while(c1 < band2.size){
             if (band2[c1] > 0.0f && band2[c1+1] == 0.0f){
-                if(band2[c1] > minPower){resultBand2[c1] = band2[c1]}
+                if(band2[c1] > minPower){resultBand1[c1] = band2[c1]}
                 helper = true //help iterate while loop without affecting next if check
             }
 
@@ -217,7 +217,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             }
 
             if (band2[c1] > 0.0f && band2[c1+1] > 0.0f && c2helper) {
-                if(band2[c1] > minPower){resultBand2[c1] = band2[c1]}
+                if(band2[c1] > minPower){resultBand1[c1] = band2[c1]}
                 c1 += c2 - largestPos
                 c2helper = false
                 c2 = 0
@@ -259,7 +259,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
         while(c1 < band3.size){
             if (band3[c1] > 0.0f && band3[c1+1] == 0.0f){
-                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                if(band3[c1] > minPower){resultBand1[c1] = band3[c1]}
                 helper = true //help iterate while loop without affecting next if check
             }
 
@@ -277,7 +277,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             }
 
             if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && c2helper) {
-                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
+                if(band3[c1] > minPower){resultBand1[c1] = band3[c1]}
                 c1 += c2 - largestPos
                 c2helper = false
                 c2 = 0
@@ -293,14 +293,17 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
             }
         }
 
-        c1 = 0
-        c2 = 0
         helper = false
         c2helper = false
-        /*
+
+        c1 = 0
+        c2 = 0
+        largest = 0.0f
+        largestPos = 0
+
         //pass 4
         while(c1 < resultBand1.size){
-            if (band3[c1] > 0.0f && band3[c1+1] == 0.0f){
+            if (resultBand1[c1] > 0.0f && resultBand1[c1+1] == 0.0f){
                 if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
                 helper = true //help iterate while loop without affecting next if check
             }
@@ -332,7 +335,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                 c1++
             }
         }
-        */
+
         //log.debug { result.toString() }
         //log.debug { bands.toString() }
 

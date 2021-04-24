@@ -25,7 +25,7 @@ public class AudioDevice
 	private final SourceDataLine out;
 	
 	/** buffer for BUFFER_SIZE 16-bit samples **/
-	private byte[] buffer = new byte[BUFFER_SIZE*2];
+	private final byte[] buffer = new byte[BUFFER_SIZE*2];
 	
 	/**
 	 * Constructor, initializes the audio system for

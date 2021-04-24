@@ -233,10 +233,9 @@ public class Plot
 			{
 				float min = 0;
 				float max = 0;
-				for( int i = 0; i < samples.length; i++ )
-				{
-					min = Math.min( samples[i], min );
-					max = Math.max( samples[i], max );
+				for (float sample : samples) {
+					min = Math.min(sample, min);
+					max = Math.max(sample, max);
 				}
 				scalingFactor = max - min;
 			}

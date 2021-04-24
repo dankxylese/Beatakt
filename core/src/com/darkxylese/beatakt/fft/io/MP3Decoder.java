@@ -38,7 +38,7 @@ public class MP3Decoder implements Decoder
 	public MP3Decoder( InputStream stream ) throws Exception
 	{
 		InputStream in = new BufferedInputStream( stream, 1024*1024 );
-		this.in = new MP3AudioFileReader( ).getAudioInputStream( in );
+		this.in = new MP3AudioFileReader().getAudioInputStream( in );
 		AudioFormat baseFormat = this.in.getFormat();
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											baseFormat.getSampleRate(), 16,
@@ -93,7 +93,7 @@ public class MP3Decoder implements Decoder
 		return buffer.getSampleCount();
 	}
 
-	class MP3AudioFileReader extends TAudioFileReader
+	static class MP3AudioFileReader extends TAudioFileReader
 	{
 		public static final int	INITAL_READ_LENGTH	= 128000;
 		private static final int MARK_LIMIT = INITAL_READ_LENGTH + 1;
@@ -111,21 +111,18 @@ public class MP3Decoder implements Decoder
 		@Override
 		protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long mediaLength)
 		throws UnsupportedAudioFileException, IOException {
-			HashMap aff_properties = new HashMap();
-			HashMap af_properties = new HashMap();
+			HashMap<String, Object> aff_properties = new HashMap<>();
+			HashMap<String, java.io.Serializable> af_properties = new HashMap<String, java.io.Serializable>();
 			int mLength = (int)mediaLength;
-			int size = inputStream.available();
 			PushbackInputStream pis = new PushbackInputStream(inputStream, MARK_LIMIT);
-			byte head[] = new byte[22];
-			pis.read(head);			
+			byte[] head = new byte[22];
 
 			// Check for WAV, AU, and AIFF, Ogg Vorbis, Flac, MAC file formats.
 			// Next check for Shoutcast (supported) and OGG (unsupported) streams.
 			if ((head[0] == 'R') && (head[1] == 'I') && (head[2] == 'F')
 					&& (head[3] == 'F') && (head[8] == 'W') && (head[9] == 'A')
 					&& (head[10] == 'V') && (head[11] == 'E'))
-			{				
-				int isPCM = ((head[21] << 8) & 0x0000FF00) | ((head[20]) & 0x00000FF);				
+			{
 				throw new UnsupportedAudioFileException("WAV PCM stream found");				
 
 			}
@@ -176,10 +173,8 @@ public class MP3Decoder implements Decoder
 			// MPEG header info.
 			int nVersion = AudioSystem.NOT_SPECIFIED;
 			int nLayer = AudioSystem.NOT_SPECIFIED;
-			// int nSFIndex = AudioSystem.NOT_SPECIFIED;
 			int nMode = AudioSystem.NOT_SPECIFIED;
 			int FrameSize = AudioSystem.NOT_SPECIFIED;
-			// int nFrameSize = AudioSystem.NOT_SPECIFIED;
 			int nFrequency = AudioSystem.NOT_SPECIFIED;
 			int nTotalFrames = AudioSystem.NOT_SPECIFIED;
 			float FrameRate = AudioSystem.NOT_SPECIFIED;
@@ -193,7 +188,7 @@ public class MP3Decoder implements Decoder
 			{
 				Bitstream m_bitstream = new Bitstream(pis);
 				aff_properties.put("mp3.header.pos",
-						new Integer(m_bitstream.header_pos()));
+						m_bitstream.header_pos());
 				Header m_header = m_bitstream.readFrame();
 				// nVersion = 0 => MPEG2-LSF (Including MPEG2.5), nVersion = 1 => MPEG1
 				nVersion = m_header.version();
@@ -205,50 +200,49 @@ public class MP3Decoder implements Decoder
 				// nLayer = 1,2,3
 				nLayer = m_header.layer();
 				aff_properties.put("mp3.version.layer", Integer.toString(nLayer));
-				// nSFIndex = m_header.sample_frequency();
 				nMode = m_header.mode();
-				aff_properties.put("mp3.mode", new Integer(nMode));
+				aff_properties.put("mp3.mode", nMode);
 				nChannels = nMode == 3 ? 1 : 2;
-				aff_properties.put("mp3.channels", new Integer(nChannels));
+				aff_properties.put("mp3.channels", nChannels);
 				nVBR = m_header.vbr();
-				af_properties.put("vbr", new Boolean(nVBR));
-				aff_properties.put("mp3.vbr", new Boolean(nVBR));
-				aff_properties.put("mp3.vbr.scale", new Integer(m_header.vbr_scale()));
+				af_properties.put("vbr", nVBR);
+				aff_properties.put("mp3.vbr", nVBR);
+				aff_properties.put("mp3.vbr.scale", m_header.vbr_scale());
 				FrameSize = m_header.calculate_framesize();
-				aff_properties.put("mp3.framesize.bytes", new Integer(FrameSize));
+				aff_properties.put("mp3.framesize.bytes", FrameSize);
 				if (FrameSize < 0)
 				{
 					throw new UnsupportedAudioFileException("Invalid FrameSize : " + FrameSize);
 				}
 				nFrequency = m_header.frequency();
-				aff_properties.put("mp3.frequency.hz", new Integer(nFrequency));
+				aff_properties.put("mp3.frequency.hz", nFrequency);
 				FrameRate = (float)((1.0 / (m_header.ms_per_frame())) * 1000.0);
-				aff_properties.put("mp3.framerate.fps", new Float(FrameRate));
+				aff_properties.put("mp3.framerate.fps", FrameRate);
 				if (FrameRate < 0)
 				{
 					throw new UnsupportedAudioFileException("Invalid FrameRate : " + FrameRate);
 				}
 				if (mLength != AudioSystem.NOT_SPECIFIED)
 				{
-					aff_properties.put("mp3.length.bytes", new Integer(mLength));
+					aff_properties.put("mp3.length.bytes", mLength);
 					nTotalFrames = m_header.max_number_of_frames(mLength);
-					aff_properties.put("mp3.length.frames", new Integer(nTotalFrames));
+					aff_properties.put("mp3.length.frames", nTotalFrames);
 				}
 				BitRate = m_header.bitrate();
-				af_properties.put("bitrate", new Integer(BitRate));
-				aff_properties.put("mp3.bitrate.nominal.bps", new Integer(BitRate));
+				af_properties.put("bitrate", BitRate);
+				aff_properties.put("mp3.bitrate.nominal.bps", BitRate);
 				nHeader = m_header.getSyncHeader();
 				encoding = sm_aEncodings[nVersion][nLayer - 1];
 				aff_properties.put("mp3.version.encoding", encoding.toString());
 				if (mLength != AudioSystem.NOT_SPECIFIED)
 				{
 					nTotalMS = Math.round(m_header.total_ms(mLength));
-					aff_properties.put("duration", new Long((long)nTotalMS * 1000L));
+					aff_properties.put("duration", (long) nTotalMS * 1000L);
 				}
-				aff_properties.put("mp3.copyright", new Boolean(m_header.copyright()));
-				aff_properties.put("mp3.original", new Boolean(m_header.original()));
-				aff_properties.put("mp3.crc", new Boolean(m_header.checksums()));
-				aff_properties.put("mp3.padding", new Boolean(m_header.padding()));
+				aff_properties.put("mp3.copyright", m_header.copyright());
+				aff_properties.put("mp3.original", m_header.original());
+				aff_properties.put("mp3.crc", m_header.checksums());
+				aff_properties.put("mp3.padding", m_header.padding());
 				InputStream id3v2 = m_bitstream.getRawID3v2();
 				if (id3v2 != null)
 				{
