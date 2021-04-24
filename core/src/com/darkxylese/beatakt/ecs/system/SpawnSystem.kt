@@ -29,7 +29,7 @@ class SpawnSystem(val result: MutableList<Float>) : IntervalSystem( 1/86f) {
         if (intervalCounter < (result.size-1) && result[intervalCounter] > 0f) { //check (if statement) in this order or the result gets called out of bounds first
             engine.entity {
                 with<TransformComponent> {
-                    position.set(MathUtils.random(0, 3) * 2.25f, 16f, 0f)
+                    setInitPos(MathUtils.random(0, 3) * 2.25f, 16f, 0f)
                 }
                 with<GraphicComponent> { id = SpriteIDs.HIT }
                 with<HitMoveComponent> { speed = 4f }

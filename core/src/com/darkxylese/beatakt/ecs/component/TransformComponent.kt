@@ -8,11 +8,22 @@ import ktx.ashley.mapperFor
 
 class TransformComponent : Component, Pool.Poolable, Comparable<TransformComponent>{
     val position = Vector3()
+    val prevPos = Vector3()
+    val interpPos = Vector3()
     val size = Vector2(9f/(1080/270), 16f/(1920/270)) // 9f/(1080/texture.width), 16f/(1920/texture.height)
 
     override fun reset() {
         position.set(Vector3.Zero)
+        prevPos.set(Vector3.Zero)
+        interpPos.set(Vector3.Zero)
         size.set(9f/(1080/270), 16f/(1920/270))
+    }
+
+    fun setInitPos(x: Float, y: Float, z: Float) {
+        position.set(x,y,z)
+        prevPos.set(x,y,z)
+        interpPos.set(x,y,z)
+
     }
 
     override fun compareTo(other: TransformComponent): Int {

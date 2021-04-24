@@ -31,41 +31,33 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
     private val playerHitbox = engine.entity {
         with<TransformComponent>{
-            position.set(0f, 2f, 2f)
+            setInitPos(0f, 2f, 2f)
         }
         with<PlayerComponent>()
         with<GraphicComponent>{id=SpriteIDs.PLAYER}
     }
-        /*
-    private val hit = engine.entity {
-        with<TransformComponent>{
 
-            position.set(2.25f, 10f, 0f)
-        }
-        with<GraphicComponent>{id=SpriteIDs.HIT}
-        with<HitMoveComponent> { speed = 2f}
-    }   */
     private val hitboxA = engine.entity {
         with<TransformComponent>{
-            position.set(0f, 2f, 1f)
+            setInitPos(0f, 2f, 1f)
         }
         with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxB = engine.entity {
         with<TransformComponent>{
-            position.set(2.25f, 2f, 1f)
+            setInitPos(2.25f, 2f, 1f)
         }
         with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxC = engine.entity {
         with<TransformComponent>{
-            position.set(4.5f, 2f, 1f)
+            setInitPos(4.5f, 2f, 1f)
         }
         with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }
     private val hitboxD = engine.entity {
         with<TransformComponent>{
-            position.set(6.75f, 2f, 1f)
+            setInitPos(6.75f, 2f, 1f)
         }
         with<GraphicComponent>{id=SpriteIDs.HITBOX}
     }

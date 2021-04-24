@@ -41,7 +41,7 @@ class PlayerInputSystem(
         if (touchPosVecUnprj.x in 6.75f..9f){
             //fourth tile -> send event ^
         }
-        transform.position.x = touchPosVecUnprj.x - 1.125f
+        transform.interpPos.x = touchPosVecUnprj.x - 1.125f
         //log.debug { "Raw: ${touchPosVec.x}, ${touchPosVec.y} // Unprojected: ${touchPosVecUnprj.x}, ${touchPosVecUnprj.y}" }
     }
 }

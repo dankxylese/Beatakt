@@ -51,7 +51,7 @@ class RenderSystem(
         }
 
         graphic.sprite.run{
-            setBounds(transform.position.x, transform.position.y, transform.size.x, transform.size.y)
+            setBounds(transform.interpPos.x, transform.interpPos.y, transform.size.x, transform.size.y)
             draw(batch)
         }
 
