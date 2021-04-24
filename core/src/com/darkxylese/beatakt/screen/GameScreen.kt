@@ -151,13 +151,13 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                     c2++
                 }
                 c2helper = true
-                c1 += largestPos
+                c1 += largestPos //move pointer to largest pos
 
             }
 
             if (band1[c1] > 0.0f && band1[c1+1] > 0.0f && c2helper) {
                 if(band1[c1] > minPower){resultBand1[c1] = band1[c1]}
-                c1 += c2 - largestPos
+                c1 += c2 - largestPos //help iterate while loop without affecting next if check
                 c2helper = false
                 c2 = 0
                 largest = 0f
@@ -212,13 +212,13 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                     c2++
                 }
                 c2helper = true
-                c1 += largestPos
+                c1 += largestPos //move pointer to largest pos
 
             }
 
             if (band2[c1] > 0.0f && band2[c1+1] > 0.0f && c2helper) {
                 if(band2[c1] > minPower){resultBand1[c1] = band2[c1]}
-                c1 += c2 - largestPos
+                c1 += c2 - largestPos //help iterate while loop without affecting next if check
                 c2helper = false
                 c2 = 0
                 largest = 0f
@@ -272,13 +272,13 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
                     c2++
                 }
                 c2helper = true
-                c1 += largestPos
+                c1 += largestPos //move pointer to largest pos
 
             }
 
             if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && c2helper) {
                 if(band3[c1] > minPower){resultBand1[c1] = band3[c1]}
-                c1 += c2 - largestPos
+                c1 += c2 - largestPos //move pointer to end of large scan range
                 c2helper = false
                 c2 = 0
                 largest = 0f
@@ -303,36 +303,30 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
         //pass 4
         while(c1 < resultBand1.size){
-            if (resultBand1[c1] > 0.0f && resultBand1[c1+1] == 0.0f){
-                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
-                helper = true //help iterate while loop without affecting next if check
-            }
 
-            while (c2 <= 10){
-                if (band3[c1+c2] > largest){
-                    largest = band3[c1+c2]
-                    largestPos = c2
+            if (c1 > (resultBand1.size - 26)){ //if we have less that 10 samples left to analyse, break to avoid out of bound exc
+                break
+            }
+            if (!c2helper){
+                while (c2 <= 25){ //25 is our scan range - this can be increased or decreased to change difficulty - bake into settings file
+                    if (resultBand1[c1+c2] > largest){ //find largest (strongest beat) in the range
+                        largest = resultBand1[c1+c2]
+                        largestPos = c2
+                    }
+                    c2++
                 }
-                c2++
+                c2helper = true
+                c1 += largestPos //move pointer to largest pos
             }
-            c2helper = true
-            c1 += largestPos
 
 
-            if (band3[c1] > 0.0f && band3[c1+1] > 0.0f && c2helper) {
-                if(band3[c1] > minPower){resultBand3[c1] = band3[c1]}
-                c1 += c2 - largestPos
+            if (c2helper) {
+                resultBand4[c1] = resultBand1[c1]
+                c1 += c2 - largestPos //move pointer to end of large scan range
                 c2helper = false
                 c2 = 0
                 largest = 0f
                 largestPos = 0
-            }
-            if (helper){
-                c1++
-                helper = false
-            }
-            if (band3[c1] == 0.0f){
-                c1++
             }
         }
 
@@ -340,7 +334,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         //log.debug { bands.toString() }
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand1))
+            addSystem(SpawnSystem(resultBand4))
         }
         //val text: String = handle.readString()
 

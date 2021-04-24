@@ -26,7 +26,7 @@ class SpawnSystem(val result: MutableList<Float>) : IntervalSystem( 1/86f) {
 
     override fun updateInterval() {
 
-        if (result[intervalCounter] > 0f && intervalCounter < result.size-1 && intervalCounter > 7) {
+        if (intervalCounter < (result.size-1) && result[intervalCounter] > 0f) { //check (if statement) in this order or the result gets called out of bounds first
             engine.entity {
                 with<TransformComponent> {
                     position.set(MathUtils.random(0, 3) * 2.25f, 16f, 0f)
@@ -35,6 +35,8 @@ class SpawnSystem(val result: MutableList<Float>) : IntervalSystem( 1/86f) {
                 with<HitMoveComponent> { speed = 4f }
             }
         }
+
+        //TODO: Make a check if intervalCounter is bigger than result.size again, and send a signal to EventManager to end the game and show score screen
 
         intervalCounter++
         //log.debug{intervalCounter.toString() }
