@@ -1,17 +1,23 @@
 package com.darkxylese.beatakt.ecs.system
 
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
 import com.darkxylese.beatakt.assets.SoundAssets
 import com.darkxylese.beatakt.assets.get
 import com.darkxylese.beatakt.ecs.component.*
+import com.darkxylese.beatakt.event.GameEvent
+import com.darkxylese.beatakt.event.GameEventListener
+import com.darkxylese.beatakt.event.GameEventManager
+import com.darkxylese.beatakt.event.GameEventType
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.log.debug
 import ktx.log.logger
+import java.util.*
 
 private val log = logger<CollisionScoreSystem>()
 
@@ -21,6 +27,7 @@ class CollisionScoreSystem(
     //private val playerHit = playerHitbox[TransformCollisionComponent.mapper]!!.bounds //collision box of hitbox
     private val playerCollisionBox = playerHitbox[TransformCollisionComponent.mapper]!!.bounds
     private val scoreCmp = playerHitbox[ScoreComponent.mapper]!!
+    private val playerCmp = playerHitbox[PlayerComponent.mapper]!!
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
         entity[GraphicComponent.mapper]?.let { graphicCmp ->
@@ -51,14 +58,19 @@ class CollisionScoreSystem(
             veryLate.x = 14.5F
             veryLate.y = 15F
 
-            if (Gdx.input.justTouched()) {
+
+
+            if (playerCmp.nextEvent != GameEventType.NONE) {
+                log.debug {"Last Event: "+ playerCmp.nextEvent.toString() }
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     //log.debug {"Objects on screen " + transform.bounds.toString()}
                     //log.debug {"Player " + playerCollisionBox.toString()}
 
-                    if (transform.position.y < 0f) {
+                    if (transform.position.y < -2f) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
+                        //playerCmp.nextEvent = GameEventType.NONE
+                        //log.debug {"Removed Game Event" }
 
                         if (popObject(entity)) {   //pop object from tracker
                             entity.addComponent<RemoveComponent>(engine)
@@ -82,18 +94,23 @@ class CollisionScoreSystem(
                         } else { // overlapped too late (or frames were delivered too slowly and not in time (as this is a time dependent and not fps, calculation)) = miss
                             scoreCalc(0, "miss")
                         }
-
                         scoreCmp.hits++
                         //hitSound.play()
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
-                        if (popObject(entity)) {
+                        if (popObject(entity)) {  //finds the next in ID order hit so that higher hits don't get removed first (returns false if not first to be removed)
                             entity.addComponent<RemoveComponent>(engine)
+                            playerCmp.nextEvent = GameEventType.NONE // remove only if when the correct hit block is found. otherwise
+                            log.debug {"Removed Game Event" }
                         }
                     }
+                    if (!transform.bounds.overlaps(playerCollisionBox)){
+                        //no overlap
+                    }
                 }
+
             } else {
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (without touch)
-                    if (transform.position.y < 0) {
+                    if (transform.position.y < -2f) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
                         scoreCmp.currentObjects
@@ -149,5 +166,9 @@ class CollisionScoreSystem(
         log.debug {"Failed to Return False"}
         return false
 
+    }
+
+    fun popOverboardObject() {
+        scoreCmp.currentObjects.remove()
     }
 }

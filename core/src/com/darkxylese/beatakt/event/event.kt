@@ -4,6 +4,7 @@ import ktx.collections.GdxSet
 import java.util.*
 
 enum class GameEventType{
+    NONE,
     PLAYER_DEATH,
     TOUCH1,
     TOUCH2,

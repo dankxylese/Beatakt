@@ -20,7 +20,7 @@ public class MultiBandThreshold
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
-	public static final String FILE = "/home/manse/Beatakt/Songs/AndIMayCry.mp3";
+	public static final String FILE = "/home/manse/Beatakt/Songs/DiscoFries.mp3";
 	public static final int HOP_SIZE = 512;
 	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
@@ -88,7 +88,7 @@ public class MultiBandThreshold
 
 	static public void outputFile(List<List<Float>> spectralFlux, List<List<Float>> thresholds, int duration){
 		try{
-		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/AndIMayCry.bm", "rw");
+		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/DiscoFries.bm", "rw");
 		stream.setLength(0); //clear file before hand
 		FileChannel channel = stream.getChannel();
 		int k = 0;

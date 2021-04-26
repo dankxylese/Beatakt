@@ -24,9 +24,9 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Beatakt/AndIMayCry.bm")
+            beatMapLoc = Gdx.files.external("Beatakt/DiscoFries.bm")
             beatMapName = "AndIMayCry"
-            beatSongLoc = Gdx.files.external("/Music/AndIMayCry.mp3")
+            beatSongLoc = Gdx.files.external("/Music/DiscoFries.mp3")
         }
     }
 
@@ -37,7 +37,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         }
         with<PlayerComponent>()
         with<TransformCollisionComponent>{
-            setInitBox(0f, 2f, (9f/(1080/270))*0.7f, (16f/(1920/270))*1.3f)
+            setInitBox(0f, 3f, (9f/(1080/270))*0.7f, (16f/(1920/270))*1.3f)
         }
         with<ScoreComponent>()
         with<GraphicComponent>{id=SpriteIDs.PLAYER}
