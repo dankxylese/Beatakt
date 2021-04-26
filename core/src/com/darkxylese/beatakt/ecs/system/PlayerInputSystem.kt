@@ -11,6 +11,7 @@ import com.darkxylese.beatakt.ecs.component.TransformCollisionComponent
 import com.darkxylese.beatakt.ecs.component.TransformComponent
 import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.event.GameEventType
+import com.darkxylese.beatakt.screen.INPUT_TIMEOUT
 import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.log.debug
@@ -30,6 +31,15 @@ class PlayerInputSystem(
         val transformCol = entity[TransformCollisionComponent.mapper]!!
         val playerCmp = entity[PlayerComponent.mapper]!!
         require(transform!= null) {"Entity must have a TransformComponent. entity=$entity"}
+
+        playerCmp.timeSinceEvent+=deltaTime
+
+        if (playerCmp.timeSinceEvent > INPUT_TIMEOUT){
+            playerCmp.timeSinceEvent = 0f
+            playerCmp.nextEvent = GameEventType.NONE
+        }
+
+
 
         if (playerCmp.touchEnabled){
             touchPosVec.x = Gdx.input.x.toFloat()

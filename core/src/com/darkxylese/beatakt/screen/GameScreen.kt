@@ -19,7 +19,8 @@ import kotlin.collections.ArrayList
 
 private val log = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1/30f
-const val HITBOX_HEIGHT = 2.2f
+const val HITBOX_HEIGHT = 2f
+const val INPUT_TIMEOUT = 0.5f
 
 class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
@@ -38,7 +39,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         }
         with<PlayerComponent>()
         with<TransformCollisionComponent>{
-            setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.7f, (16f/(1920/270))*1.3f)
+            setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.8f, (16f/(1920/270))*1.3f)
         }
         with<ScoreComponent>()
         with<GraphicComponent>{id=SpriteIDs.PLAYER}

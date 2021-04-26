@@ -11,11 +11,13 @@ class PlayerComponent : Component, Pool.Poolable{
 
     var nextEvent: GameEventType = GameEventType.NONE
     var touchEnabled = true
+    var timeSinceEvent = 0f
 
 
     override fun reset() {
         nextEvent = GameEventType.NONE
-        var touchEnabled = true
+        touchEnabled = true
+        timeSinceEvent = 0f
     }
 
     companion object {
