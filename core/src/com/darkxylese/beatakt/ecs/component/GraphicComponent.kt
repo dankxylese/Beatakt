@@ -16,11 +16,13 @@ enum class SpriteIDs {
 class GraphicComponent : Component, Pool.Poolable{
     val sprite = Sprite()
     var id = SpriteIDs.NONE
+    var timeSinceCreation = 0f
 
     override fun reset() {
         id = SpriteIDs.NONE
         sprite.texture = null
         sprite.setColor(1f,1f,1f,1f)
+        timeSinceCreation = 0f
     }
 
     fun setSpriteRegion(region: TextureRegion){

@@ -9,7 +9,7 @@ import ktx.log.debug
 import ktx.log.logger
 
 
-private val log = logger<GameScreen>()
+private val log = logger<BeataktScreen>()
 abstract class BeataktScreen(
         val game: Beatakt,
         val batch: Batch = game.batch,

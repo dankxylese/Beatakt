@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.darkxylese.beatakt.ecs.system.*
+import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.screen.GameScreen
 import com.darkxylese.beatakt.screen.LoadingScreen
 import ktx.app.KtxGame
@@ -36,9 +37,10 @@ class Beatakt : KtxGame<KtxScreen>() {
     val backgroundTexture2 by lazy { Texture(Gdx.files.internal("images/background2.png")) }
 
     val batch: Batch by lazy { SpriteBatch() }
+    val gameEventManager = GameEventManager()
     val engine: Engine by lazy {
         PooledEngine().apply {
-            addSystem(PlayerInputSystem(gameViewport))
+            addSystem(PlayerInputSystem(gameViewport, gameEventManager))
             addSystem(MoveSystem())
             addSystem(TextureSystem(
                     graphicsAtlas.findRegion("hitboxUnifiedCentered270a"),

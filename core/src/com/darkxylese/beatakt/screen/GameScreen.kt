@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.math.Vector3
 import com.darkxylese.beatakt.Beatakt
 import com.darkxylese.beatakt.ecs.component.*
+import com.darkxylese.beatakt.ecs.system.CollisionScoreSystem
 import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import ktx.ashley.entity
 import ktx.ashley.get
@@ -32,8 +33,13 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
     private val playerHitbox = engine.entity {
         with<TransformComponent>{
             setInitPos(0f, 2f, 2f)
+            //bounds.y = 2f
         }
         with<PlayerComponent>()
+        with<TransformCollisionComponent>{
+            setInitBox(0f, 2f, (9f/(1080/270))*0.7f, (16f/(1920/270))*1.3f)
+        }
+        with<ScoreComponent>()
         with<GraphicComponent>{id=SpriteIDs.PLAYER}
     }
 
@@ -326,7 +332,8 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         //log.debug { bands.toString() }
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand4))
+            addSystem(SpawnSystem(resultBand4, playerHitbox))
+            addSystem(CollisionScoreSystem(playerHitbox))
         }
         //val text: String = handle.readString()
 

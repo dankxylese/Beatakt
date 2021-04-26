@@ -49,11 +49,12 @@ class MoveSystem : IteratingSystem(allOf(TransformComponent::class, HitMoveCompo
 
         transform.position.x = MathUtils.clamp(transform.position.x, 0f, V_WIDTH - transform.size.x)
         transform.position.y -= move.speed * deltaTime
+        transform.bounds.y = transform.position.y
 
 
-
+        /*
         if (transform.position.y <= -2f){
             entity.addComponent<RemoveComponent>(engine)
-        }
+        }*/
     }
 }

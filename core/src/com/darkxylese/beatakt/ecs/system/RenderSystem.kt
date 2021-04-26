@@ -53,6 +53,7 @@ class RenderSystem(
         batch.use(uiViewport.camera.combined){
             background1.run {
                 scroll(background1ScrollSpeed.x*deltaTime, background1ScrollSpeed.y*deltaTime)
+                //setAlpha(0.2f) //between 0 and 1 / 0 being black
                 draw(batch)
             }
             background2.run {
