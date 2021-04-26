@@ -52,7 +52,7 @@ class MoveSystem : IteratingSystem(allOf(TransformComponent::class, HitMoveCompo
 
 
 
-        if (transform.position.y <= -0.7f){
+        if (transform.position.y <= -2f){
             entity.addComponent<RemoveComponent>(engine)
         }
     }

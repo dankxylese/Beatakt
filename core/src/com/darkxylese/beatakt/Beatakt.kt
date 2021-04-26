@@ -22,13 +22,19 @@ import ktx.log.logger
 const val UNIT_SCALE = 1/10f
 const val V_WIDTH = 9
 const val V_HEIGHT = 16
+const val V_WIDTH_PIXELS = 720
+const val V_HEIGHT_PIXELS = 1280
 
 private val log = logger<Beatakt>()
 
 class Beatakt : KtxGame<KtxScreen>() {
-    val gameViewport = FitViewport(9f, 16f)
+    val uiViewport = FitViewport(V_WIDTH_PIXELS.toFloat(), V_HEIGHT_PIXELS.toFloat())
+    val gameViewport = FitViewport(V_WIDTH.toFloat(), V_HEIGHT.toFloat())
 
     val graphicsAtlas by lazy{ TextureAtlas(Gdx.files.internal("images/GameElements.atlas")) }
+    val backgroundTexture1 by lazy { Texture(Gdx.files.internal("images/background1.png")) }
+    val backgroundTexture2 by lazy { Texture(Gdx.files.internal("images/background2.png")) }
+
     val batch: Batch by lazy { SpriteBatch() }
     val engine: Engine by lazy {
         PooledEngine().apply {
@@ -39,7 +45,12 @@ class Beatakt : KtxGame<KtxScreen>() {
                     graphicsAtlas.findRegion("hitRed270a"),
                     graphicsAtlas.findRegion("hit270a")
             ))
-            addSystem(RenderSystem(batch, gameViewport))
+            addSystem(RenderSystem(
+                    batch,
+                    gameViewport,
+                    uiViewport,
+                    backgroundTexture1,
+                    backgroundTexture2))
             addSystem(RemoveSystem())
         }
     }
