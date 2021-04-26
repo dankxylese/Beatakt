@@ -11,6 +11,7 @@ class TransformComponent : Component, Pool.Poolable, Comparable<TransformCompone
     val position = Vector3()
     val prevPos = Vector3()
     val interpPos = Vector3()
+    var belowHitBox = false
     val size = Vector2(9f/(1080/270), 16f/(1920/270)) // 9f/(1080/texture.width), 16f/(1920/texture.height) 270x270
     var bounds = Rectangle()
 
@@ -21,6 +22,7 @@ class TransformComponent : Component, Pool.Poolable, Comparable<TransformCompone
         interpPos.set(Vector3.Zero)
         size.set(9f/(1080/270), 16f/(1920/270))
         bounds = Rectangle(0f,0f,0f,0f)
+        belowHitBox = false
     }
 
     fun setInitPos(x: Float, y: Float, z: Float) {

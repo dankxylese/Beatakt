@@ -12,6 +12,7 @@ import com.darkxylese.beatakt.event.GameEvent
 import com.darkxylese.beatakt.event.GameEventListener
 import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.event.GameEventType
+import com.darkxylese.beatakt.screen.HITBOX_HEIGHT
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
@@ -65,7 +66,10 @@ class CollisionScoreSystem(
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     //log.debug {"Objects on screen " + transform.bounds.toString()}
                     //log.debug {"Player " + playerCollisionBox.toString()}
-
+                    if (transform.position.y < HITBOX_HEIGHT && !transform.belowHitBox){ //as it leaves the hitbox, pop it so that the next hit can be registered with popObject()
+                        popOverboardObject(entity)
+                        transform.belowHitBox = true
+                    }
                     if (transform.position.y < -2f) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
@@ -110,13 +114,15 @@ class CollisionScoreSystem(
 
             } else {
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (without touch)
+                    if (transform.position.y < HITBOX_HEIGHT && !transform.belowHitBox){
+                        popOverboardObject(entity)
+                        transform.belowHitBox = true
+                    }
                     if (transform.position.y < -2f) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
                         scoreCmp.currentObjects
-                        if (popObject(entity)) {
-                            entity.addComponent<RemoveComponent>(engine)
-                        }
+                        entity.addComponent<RemoveComponent>(engine)
                     }
                 }
             }
@@ -155,7 +161,7 @@ class CollisionScoreSystem(
             log.debug {ID.id.toString()}
             log.debug {scoreCmp.currentObjects.peek().toString()}
             return if (scoreCmp.currentObjects.peek() == ID.id){
-                scoreCmp.currentObjects.remove()
+                //scoreCmp.currentObjects.remove()
                 log.debug {"Removed object"}
                 true
             } else {
@@ -168,7 +174,9 @@ class CollisionScoreSystem(
 
     }
 
-    fun popOverboardObject() {
-        scoreCmp.currentObjects.remove()
+    fun popOverboardObject(entity: Entity) {
+        entity[IdComponent.mapper]?.let { ID ->
+            scoreCmp.currentObjects.remove()
+        }
     }
 }
