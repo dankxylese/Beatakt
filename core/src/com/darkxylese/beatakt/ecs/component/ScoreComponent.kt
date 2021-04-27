@@ -15,12 +15,15 @@ class ScoreComponent : Component, Pool.Poolable {
     var length = 0f
     var beatMapLoc: FileHandle? = null
     var beatSongLoc: FileHandle? = null
+    var isDead = false
 
     var s0count = 0
     var s50count = 0
     var s100count = 0
     var s300count = 0
     var streak = 0
+    var bestStreak = 0
+    var missStreak = 0
     var currentObjects: Queue<Int> = LinkedList<Int>()
 
     override fun reset() {
@@ -34,8 +37,10 @@ class ScoreComponent : Component, Pool.Poolable {
         streak = 0
         beatMapName = ""
         length = 0f
+        missStreak = 0
         beatMapLoc = null
         beatSongLoc = null
+        isDead = false
         currentObjects.clear()
     }
 

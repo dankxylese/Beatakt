@@ -1,22 +1,24 @@
 package com.darkxylese.beatakt.screen
 
-import com.badlogic.ashley.core.Engine
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.darkxylese.beatakt.Beatakt
+import com.darkxylese.beatakt.audio.AudioService
+import com.darkxylese.beatakt.event.GameEventManager
 import ktx.app.KtxScreen
-import ktx.log.debug
+import ktx.assets.async.AssetStorage
 import ktx.log.logger
 
 
 private val log = logger<BeataktScreen>()
 abstract class BeataktScreen(
         val game: Beatakt,
-        val batch: Batch = game.batch,
         val gameViewport: Viewport = game.gameViewport,
         val uiViewport: Viewport = game.uiViewport,
-        val engine: Engine = game.engine
+        val assets: AssetStorage = game.assets,
+        val audioService: AudioService = game.audioService,
+        val gameEventManager: GameEventManager = game.gameEventManager
 ) : KtxScreen {
+
 
     override fun resize(width: Int, height: Int) {
         gameViewport.update(width, height, true)

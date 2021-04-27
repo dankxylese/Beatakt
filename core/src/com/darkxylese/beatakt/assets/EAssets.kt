@@ -4,33 +4,42 @@ import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.graphics.Texture
 import ktx.assets.getAsset
 import ktx.assets.load
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 
-// sounds
-enum class SoundAssets(val path: String) {
-    Hit("sounds/hit.wav")
-}
-
-inline fun AssetManager.load(asset: SoundAssets) = load<Sound>(asset.path)
-inline operator fun AssetManager.get(asset: SoundAssets) = getAsset<Sound>(asset.path)
-
-// music
-enum class MusicAssets(val path: String) {
-    Song("music/testaudio.mp3")
-}
-
-inline fun AssetManager.load(asset: MusicAssets) = load<Music>(asset.path)
-inline operator fun AssetManager.get(asset: MusicAssets) = getAsset<Music>(asset.path)
-
-// texture atlas
-enum class TextureAtlasAsset (
-    val isSkinAtlas: Boolean,
-    fileName: String,
-    directory: String = "images",
-    val descriptor: AssetDescriptor<TextureAtlas> = AssetDescriptor("$directory/$fileName", TextureAtlas::class.java)
+enum class TextureAsset(
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<Texture> = AssetDescriptor("$directory/$fileName", Texture::class.java)
 ){
-    GRAPHICS(false, "game.atlas")
-    //UI(true, "ui.atlas", "ui")
+    BACKGROUND1("background1.png"),
+    BACKGROUND2("background2.png")
+}
+
+enum class TextureAtlasAsset(
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<TextureAtlas> = AssetDescriptor("$directory/$fileName", TextureAtlas::class.java)
+){
+    GAME_GRAPHICS("GameElements.atlas")
+}
+
+enum class SoundAsset(
+        fileName: String,
+        directory: String = "sounds",
+        val descriptor: AssetDescriptor<Sound> = AssetDescriptor("$directory/$fileName", Sound::class.java)
+) {
+    HIT("hit.wav"),
+    FINISH("finish.wav"),
+    FAIL("fail.wav")
+}
+
+enum class MusicAsset(
+        fileName: String,
+        directory: String = "music",
+        val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
+) {
+    STARTMUSIC("menu.mp3")
 }

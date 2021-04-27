@@ -1,16 +1,11 @@
 package com.darkxylese.beatakt.ecs.system
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.math.Vector2
-import com.darkxylese.beatakt.assets.SoundAssets
-import com.darkxylese.beatakt.assets.get
+import com.darkxylese.beatakt.assets.SoundAsset
+import com.darkxylese.beatakt.audio.AudioService
 import com.darkxylese.beatakt.ecs.component.*
-import com.darkxylese.beatakt.event.GameEvent
-import com.darkxylese.beatakt.event.GameEventListener
-import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.event.GameEventType
 import com.darkxylese.beatakt.screen.HITBOX_HEIGHT
 import ktx.ashley.addComponent
@@ -18,12 +13,12 @@ import ktx.ashley.allOf
 import ktx.ashley.get
 import ktx.log.debug
 import ktx.log.logger
-import java.util.*
 
 private val log = logger<CollisionScoreSystem>()
 
 class CollisionScoreSystem(
-        playerHitbox : Entity
+        playerHitbox : Entity,
+        private val audioService: AudioService
 ) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()){
     //private val playerHit = playerHitbox[TransformCollisionComponent.mapper]!!.bounds //collision box of hitbox
     private val playerCollisionBox = playerHitbox[TransformCollisionComponent.mapper]!!.bounds
@@ -81,6 +76,7 @@ class CollisionScoreSystem(
                         }
                     }
                     if (transform.bounds.overlaps(playerCollisionBox)) {
+                        if (popObject(entity)) {  //finds the next in ID order hit so that higher hits don't get removed first (returns false if not first to be removed)
                         log.debug { graphicCmp.timeSinceCreation.toString() }
                         //log.debug { speed.toString() }
 
@@ -101,10 +97,11 @@ class CollisionScoreSystem(
                         scoreCmp.hits++
                         //hitSound.play()
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
-                        if (popObject(entity)) {  //finds the next in ID order hit so that higher hits don't get removed first (returns false if not first to be removed)
+
                             entity.addComponent<RemoveComponent>(engine)
                             playerCmp.nextEvent = GameEventType.NONE // remove only if when the correct hit block is found. otherwise
                             log.debug {"Removed Game Event" }
+                            audioService.play(SoundAsset.HIT, 0.3f)
                         }
                     }
                     if (!transform.bounds.overlaps(playerCollisionBox)){
@@ -136,40 +133,49 @@ class CollisionScoreSystem(
         if (howAccurateHit == 0) {
             scoreCmp.s0count += 1
             scoreCmp.streak = 0
+            scoreCmp.missStreak += 1
+            log.debug { "Missed Hit, Streak = ${scoreCmp.missStreak}, isDead = ${scoreCmp.isDead}" }
         }
         if (howAccurateHit == 50) {
             scoreCmp.s50count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 50 + (50 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+            scoreCmp.missStreak = 0
         }
         if (howAccurateHit == 100) {
             scoreCmp.s100count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 100 + (100 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+            scoreCmp.missStreak = 0
         }
         if (howAccurateHit == 300) {
             scoreCmp.s300count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 300 + (300 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
+            scoreCmp.missStreak = 0
         }
+
+        if (scoreCmp.streak > scoreCmp.bestStreak){ //save best streak
+            scoreCmp.bestStreak = scoreCmp.streak
+        }
+
         scoreCmp.accuracy = howTimedHit
     }
 
     fun popObject(entity: Entity) : Boolean { //pops the first object from object tracker
 
         entity[IdComponent.mapper]?.let { ID ->
-            log.debug {ID.id.toString()}
-            log.debug {scoreCmp.currentObjects.peek().toString()}
+            //log.debug {ID.id.toString()}
+            //log.debug {scoreCmp.currentObjects.peek().toString()}
             return if (scoreCmp.currentObjects.peek() == ID.id){
-                //scoreCmp.currentObjects.remove()
                 log.debug {"Removed object"}
                 true
             } else {
-                log.debug {"Failed to remove // Tried to remove an object out of order"}
+                //log.debug {"Failed to remove // Tried to remove an object out of order"}
                 false
             }
         }
-        log.debug {"Failed to Return False in Object Removal"}
+        //log.debug {"Failed to Return False in Object Removal"}
         return false
 
     }

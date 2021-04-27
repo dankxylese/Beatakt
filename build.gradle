@@ -97,5 +97,6 @@ project(":core") {
         api "io.github.libktx:ktx-assets:$ktxVersion"
         api "io.github.libktx:ktx-inject:$ktxVersion"
         api "io.github.libktx:ktx-ashley:$ktxVersion"
+        api "io.github.libktx:ktx-preferences:$ktxVersion"
     }
 }

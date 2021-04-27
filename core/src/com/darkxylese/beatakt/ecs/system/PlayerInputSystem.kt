@@ -58,6 +58,7 @@ class PlayerInputSystem(
             touchPosVecUnprj.x = 10f
             updateCollBox(transformCol, 0f)
             playerCmp.nextEvent = (GameEventType.TOUCH1)
+            gameEventManager.dispatchEvent(GameEventType.TOUCH1)
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.V)) {
             playerCmp.touchEnabled = false
@@ -65,6 +66,7 @@ class PlayerInputSystem(
             touchPosVecUnprj.x = 10f
             updateCollBox(transformCol, 2.25f)
             playerCmp.nextEvent = (GameEventType.TOUCH2)
+            gameEventManager.dispatchEvent(GameEventType.TOUCH2)
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             playerCmp.touchEnabled = false
@@ -72,6 +74,7 @@ class PlayerInputSystem(
             touchPosVecUnprj.x = 10f
             updateCollBox(transformCol, 4.5f)
             playerCmp.nextEvent = (GameEventType.TOUCH3)
+            gameEventManager.dispatchEvent(GameEventType.TOUCH3)
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             playerCmp.touchEnabled = false
@@ -79,6 +82,7 @@ class PlayerInputSystem(
             touchPosVecUnprj.x = 10f
             updateCollBox(transformCol, 6.75f)
             playerCmp.nextEvent = (GameEventType.TOUCH4)
+            gameEventManager.dispatchEvent(GameEventType.TOUCH4)
         }
 
 
