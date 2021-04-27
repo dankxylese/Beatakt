@@ -99,7 +99,7 @@ class GameScreen(private val batch: Batch,
     override fun show() {
         // start the playback of the background music when we enter game screen
         //assets[MusicAssets.Song].play()
-        gameEventManager.addInputListener(this)
+        //gameEventManager.addInputListener(this)
 
         hitbox[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitRed270"))
         hitboxHa[RenderComponent.mapper]?.sprite?.setRegion(assets[TextureAtlasAssets.Game].findRegion("hitboxUnifiedCentered270"))
