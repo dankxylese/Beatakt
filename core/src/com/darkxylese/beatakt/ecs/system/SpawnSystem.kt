@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.darkxylese.beatakt.ecs.component.*
 import com.darkxylese.beatakt.screen.GameScreen
+import com.darkxylese.beatakt.screen.SPAWN_SPEED
 import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.get
@@ -22,8 +23,9 @@ private val log = logger<SpawnSystem>()
 
 class SpawnSystem(
         val result: MutableList<Float>,
-        playerHitbox : Entity
-        ) : IntervalSystem( 1/86f) {
+        playerHitbox : Entity,
+        inter: Float
+        ) : IntervalSystem(inter) {
     var intervalCounter = 334 //4s to account for speed
     var createdTotal = 0
     private val scoreCmp = playerHitbox[ScoreComponent.mapper]!! //top score thing TEMP
@@ -40,7 +42,7 @@ class SpawnSystem(
                 }
                 with<CollisionComponent>()
                 with<GraphicComponent> { id = SpriteIDs.HIT }
-                with<HitMoveComponent> { speed = 4f }
+                with<HitMoveComponent> { speed = SPAWN_SPEED }
                 with<IdComponent>{id = createdTotal}
             }
             scoreCmp.currentObjects.add(createdTotal)

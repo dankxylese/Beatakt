@@ -20,17 +20,40 @@ import kotlin.collections.ArrayList
 private val log = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1/30f
 const val HITBOX_HEIGHT = 2f
-const val INPUT_TIMEOUT = 0.5f
+const val INPUT_TIMEOUT = 1.5f
+const val SPAWN_SPEED = 12f
+const val BANDS_FILTER_STRENGHT = 0.14f //0.29
+const val BAND1_FILTER_POST_LIMIT = 15f //30
+const val BANDS23_FILTER_POST_LIMIT = 7f //10
 
 class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Beatakt/DiscoFries.bm")
-            beatMapName = "AndIMayCry"
-            beatSongLoc = Gdx.files.external("/Music/DiscoFries.mp3")
+            beatMapLoc = Gdx.files.external("Beatakt/Song2.bm")
+            beatMapName = "WestCoastZHU"
+            beatSongLoc = Gdx.files.external("/Music/Song2.mp3")
+            length = 122f
         }
     }
+    /*
+    private val score = engine.entity {
+        with<ScoreComponent>{
+            beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
+            beatMapName = "WestCoastZHU"
+            beatSongLoc = Gdx.files.external("/Music/WestCoastZHU.mp3")
+            length = 260f
+        }
+    }*/
+    /*
+    private val score = engine.entity {
+        with<ScoreComponent>{
+            beatMapLoc = Gdx.files.external("Beatakt/Exodus.bm")
+            beatMapName = "Exodus"
+            beatSongLoc = Gdx.files.external("/Music/Exodus.mp3")
+            length = 176f
+        }
+    }*/
 
     private val playerHitbox = engine.entity {
         with<TransformComponent>{
@@ -76,11 +99,13 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
         var beatMapLocation: FileHandle? = null
         var textD = ""
+        var lenght = 0f
 
 
         score[ScoreComponent.mapper].let { score ->
             if (score != null) {
                 beatMapLocation = score.beatMapLoc
+                lenght = score.length
             }
         }
 
@@ -123,14 +148,14 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         var c3total = 0f
 
         while(c1 < band1.size){
-            if (band1[c1] > 30f){
+            if (band1[c1] > BAND1_FILTER_POST_LIMIT){
                 c3++
                 c3total += band1[c1]
             }
             c1++
         }
 
-        minPower = (c3total / c3)*0.29f //filter output
+        minPower = (c3total / c3)*BANDS_FILTER_STRENGHT //filter output
 
         c1 = 0
         largest = 0.0f
@@ -184,14 +209,14 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
 
         while(c1 < band2.size){
-            if (band2[c1] > 10f){
+            if (band2[c1] > BANDS23_FILTER_POST_LIMIT){
                 c3++
                 c3total += band2[c1]
             }
             c1++
         }
 
-        minPower = (c3total / c3)*0.29f //filter output
+        minPower = (c3total / c3)*BANDS_FILTER_STRENGHT //filter output
 
         c1 = 0
         largest = 0.0f
@@ -244,14 +269,14 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
 
 
         while(c1 < band3.size){
-            if (band3[c1] > 10f){
+            if (band3[c1] > BANDS23_FILTER_POST_LIMIT){
                 c3++
                 c3total += band3[c1]
             }
             c1++
         }
 
-        minPower = (c3total / c3)*0.29f //filter output
+        minPower = (c3total / c3)*BANDS_FILTER_STRENGHT //filter output
 
         c1 = 0
         largest = 0.0f
@@ -334,7 +359,7 @@ class GameScreen(game: Beatakt) : BeataktScreen(game) {
         //log.debug { bands.toString() }
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand4, playerHitbox))
+            addSystem(SpawnSystem(resultBand4, playerHitbox, 1/(resultBand1.size / lenght)))
             addSystem(CollisionScoreSystem(playerHitbox))
         }
         //val text: String = handle.readString()

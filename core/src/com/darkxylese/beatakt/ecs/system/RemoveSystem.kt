@@ -11,9 +11,9 @@ class RemoveSystem : IteratingSystem(allOf(RemoveComponent::class).get()) {
         val remove = entity[RemoveComponent.mapper]
         require(remove!= null) {"Entity must have a RemoveComponent. entity=$entity"}
 
-        remove.delay -= deltaTime
-        if(remove.delay <= 0f){
+        //remove.delay -= deltaTime
+        //if(remove.delay <= 0f){
             engine.removeEntity(entity)
-        }
+
     }
 }

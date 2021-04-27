@@ -36,9 +36,9 @@ class CollisionScoreSystem(
             val hitMoveCmp = entity[HitMoveComponent.mapper]
 
             var speed = (if (hitMoveCmp?.speed != null) {
-                1 / hitMoveCmp.speed
-            } else null
-                    )
+                hitMoveCmp.speed
+            } else null)
+
 
 
             val adjustDelay = 0
@@ -81,7 +81,7 @@ class CollisionScoreSystem(
                         }
                     }
                     if (transform.bounds.overlaps(playerCollisionBox)) {
-                        //log.debug { graphicCmp.timeSinceCreation.toString() }
+                        log.debug { graphicCmp.timeSinceCreation.toString() }
                         //log.debug { speed.toString() }
 
                         //add appropriate score if hit
@@ -165,11 +165,11 @@ class CollisionScoreSystem(
                 log.debug {"Removed object"}
                 true
             } else {
-                log.debug {"Failed to remove // BUG"}
+                log.debug {"Failed to remove // Tried to remove an object out of order"}
                 false
             }
         }
-        log.debug {"Failed to Return False"}
+        log.debug {"Failed to Return False in Object Removal"}
         return false
 
     }

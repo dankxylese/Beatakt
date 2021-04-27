@@ -12,6 +12,7 @@ class ScoreComponent : Component, Pool.Poolable {
     var score = 0
     var accuracy = ""
     var beatMapName = ""
+    var length = 0f
     var beatMapLoc: FileHandle? = null
     var beatSongLoc: FileHandle? = null
 
@@ -32,6 +33,7 @@ class ScoreComponent : Component, Pool.Poolable {
         s300count = 0
         streak = 0
         beatMapName = ""
+        length = 0f
         beatMapLoc = null
         beatSongLoc = null
         currentObjects.clear()
