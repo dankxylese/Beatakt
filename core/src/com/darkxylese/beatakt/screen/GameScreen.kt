@@ -12,7 +12,7 @@ import com.darkxylese.beatakt.ecs.system.ScoreSystem
 import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import com.darkxylese.beatakt.event.GameEvent
 import com.darkxylese.beatakt.event.GameEventListener
-import com.darkxylese.beatakt.event.GameEventPlayerDeath
+import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
 import ktx.ashley.entity
 import ktx.ashley.get
@@ -29,12 +29,13 @@ import java.lang.Float.min
 private val log = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1/30f
 const val HITBOX_HEIGHT = 2f
-const val INPUT_TIMEOUT = 1.5f
-const val SPAWN_SPEED = 12f
-const val BANDS_FILTER_STRENGHT = 0.14f //0.29
-const val BAND1_FILTER_POST_LIMIT = 15f //30
+const val INPUT_TIMEOUT = 0.5f
+const val SPAWN_SPEED = 10f
+const val BANDS_FILTER_STRENGHT = 0.2f //0.29
+const val BAND1_FILTER_POST_LIMIT = 20f //30
 const val BANDS23_FILTER_POST_LIMIT = 7f //10
 const val MISSES_ALLOWED = 5
+const val SCAN_RANGE = 25
 
 class GameScreen(
         game: Beatakt,
@@ -43,10 +44,10 @@ class GameScreen(
 
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Beatakt/Song2.bm")
+            beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
             beatMapName = "WestCoastZHU"
-            beatSongLoc = Gdx.files.external("/Music/Song2.mp3")
-            length = 122f
+            beatSongLoc = Gdx.files.external("/Music/WestCoastZHU.mp3")
+            length = 260f
         }
     }
     /*
@@ -71,11 +72,13 @@ class GameScreen(
 
     override fun show() {
         gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
+        gameEventManager.addListener(GameEventType.ENDGAME, this)
         log.debug { "Game BeataktScreen is Shown" }
 
 
 
-        audioService.play(MusicAsset.STARTMUSIC)
+        //audioService.play(MusicAsset.STARTMUSIC)
+        audioService.play(MusicAsset.TESTGAMEMUSIC)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
@@ -97,7 +100,8 @@ class GameScreen(
         //log.debug { bands.toString() }
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand4, playerHitbox, 1/(resultBand4.size / lenght)))
+            addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.125)/SPAWN_SPEED).toInt()))
+                                                                                        //16 units is the in world height, -2 is the placement of the hitbox (the =) and -1.125 is half of the hitbox )
             addSystem(CollisionScoreSystem(playerHitbox, audioService))
             addSystem(ScoreSystem(game.gameEventManager))
         }
@@ -168,13 +172,25 @@ class GameScreen(
         if (type == GameEventType.PLAYER_DEATH){
             log.debug { "PLAYER DIED" }
             engine.getSystem<SpawnSystem>().setProcessing(false)
-            val eventData = data as GameEventPlayerDeath
+            val eventData = data as GameEventPlayer
             score[ScoreComponent.mapper].let { score ->
                 preferences.flush {
                     this[score!!.beatMapName] = (eventData.score)
                 }
             }
         }
+
+        if (type == GameEventType.ENDGAME){
+            log.debug { "PLAYER FINISHED" }
+            engine.getSystem<SpawnSystem>().setProcessing(false)
+            val eventData = data as GameEventPlayer
+            score[ScoreComponent.mapper].let { score ->
+                preferences.flush {
+                    this[score!!.beatMapName] = (eventData.score)
+                }
+            }
+        }
+
     }
 
     private fun processFFT(beatMapLocation: FileHandle?): MutableList<Float> {
@@ -416,11 +432,11 @@ class GameScreen(
         //pass 4
         while (c1 < resultBand1.size) {
 
-            if (c1 > (resultBand1.size - 26)) { //if we have less that 10 samples left to analyse, break to avoid out of bound exc
+            if (c1 > (resultBand1.size - SCAN_RANGE+1)) { //if we have less that 10 samples left to analyse, break to avoid out of bound exc
                 break
             }
             if (!c2helper) {
-                while (c2 <= 25) { //25 is our scan range - this can be increased or decreased to change difficulty - bake into settings file
+                while (c2 <= SCAN_RANGE) { //25 is our scan range - this can be increased or decreased to change difficulty - bake into settings file
                     if (resultBand1[c1 + c2] > largest) { //find largest (strongest beat) in the range
                         largest = resultBand1[c1 + c2]
                         largestPos = c2

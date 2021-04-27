@@ -6,6 +6,7 @@ import java.util.*
 enum class GameEventType{
     NONE,
     PLAYER_DEATH,
+    ENDGAME,
     TOUCH1,
     TOUCH2,
     TOUCH3,
@@ -17,7 +18,7 @@ interface GameEvent
 
 
 //Object because there shouldn't be many events in a frame. To create only 1 we make an object
-object GameEventPlayerDeath : GameEvent {
+object GameEventPlayer : GameEvent {
     var hits = 0 //total
     var score = 0
     var s0count = 0
@@ -26,7 +27,7 @@ object GameEventPlayerDeath : GameEvent {
     var s300count = 0
     var bestStreak = 0
 
-    override fun toString() = "GameEventPlayerDeath(Hits= $hits)"
+    override fun toString() = "GameEventPlayer(Hits= $hits)"
 }
 
 interface GameEventListener {

@@ -19,7 +19,7 @@ class ScoreSystem(private val gameEventManager: GameEventManager) : IteratingSys
             if (score.missStreak > MISSES_ALLOWED && !score.isDead){
                 gameEventManager.dispatchEvent(
                         GameEventType.PLAYER_DEATH,
-                        GameEventPlayerDeath.apply {
+                        GameEventPlayer.apply {
                             this.hits = score.hits
                             this.s0count = score.s0count
                             this.s50count = score.s50count

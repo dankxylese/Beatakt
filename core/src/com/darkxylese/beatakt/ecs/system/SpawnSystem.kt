@@ -9,7 +9,11 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.darkxylese.beatakt.ecs.component.*
+import com.darkxylese.beatakt.event.GameEventManager
+import com.darkxylese.beatakt.event.GameEventPlayer
+import com.darkxylese.beatakt.event.GameEventType
 import com.darkxylese.beatakt.screen.GameScreen
+import com.darkxylese.beatakt.screen.MISSES_ALLOWED
 import com.darkxylese.beatakt.screen.SPAWN_SPEED
 import ktx.ashley.allOf
 import ktx.ashley.entity
@@ -22,12 +26,15 @@ import ktx.log.logger
 private val log = logger<SpawnSystem>()
 
 class SpawnSystem(
-        val result: MutableList<Float>,
+        private val result: MutableList<Float>,
+        private val gameEventManager: GameEventManager,
         playerHitbox : Entity,
-        inter: Float
+        inter: Float,
+        intervalCounterAhead: Int
         ) : IntervalSystem(inter) {
-    var intervalCounter = 334 //4s to account for speed
+    var intervalCounter = 0+intervalCounterAhead //4s to account for speed
     var createdTotal = 0
+    var finished = false
     private val scoreCmp = playerHitbox[ScoreComponent.mapper]!! //top score thing TEMP
 
 
@@ -49,8 +56,21 @@ class SpawnSystem(
             createdTotal+=1
         }
 
-        //TODO: Make a check if intervalCounter is bigger than result.size again, and send a signal to EventManager to end the game and show score screen
-
+        if (intervalCounter > result.size && !finished){
+            gameEventManager.dispatchEvent(
+                GameEventType.ENDGAME,
+                GameEventPlayer.apply {
+                    this.hits = scoreCmp.hits
+                    this.s0count = scoreCmp.s0count
+                    this.s50count = scoreCmp.s50count
+                    this.s100count = scoreCmp.s100count
+                    this.s300count = scoreCmp.s300count
+                    this.score = scoreCmp.score
+                    this.bestStreak = scoreCmp.bestStreak
+                })
+            log.debug { "Dispatched ENDGAME Event" }
+            finished = true
+        }
         intervalCounter++
         //log.debug{intervalCounter.toString() }
     }
