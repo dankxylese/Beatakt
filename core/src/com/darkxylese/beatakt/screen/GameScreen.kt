@@ -29,7 +29,7 @@ import java.lang.Float.min
 private val log = logger<GameScreen>()
 private const val MAX_DELTA_TIME = 1/30f
 const val HITBOX_HEIGHT = 2f
-const val INPUT_TIMEOUT = 0.5f
+const val INPUT_TIMEOUT = 1.2f
 const val SPAWN_SPEED = 10f
 const val BANDS_FILTER_STRENGHT = 0.2f //0.29
 const val BAND1_FILTER_POST_LIMIT = 20f //30
