@@ -2,12 +2,15 @@ package com.darkxylese.beatakt.assets
 
 import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import ktx.assets.getAsset
 import ktx.assets.load
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.sun.org.apache.xpath.internal.operations.Bool
 
 enum class TextureAsset(
         fileName: String,
@@ -19,11 +22,13 @@ enum class TextureAsset(
 }
 
 enum class TextureAtlasAsset(
+        val isSkinAtlas: Boolean,
         fileName: String,
         directory: String = "images",
         val descriptor: AssetDescriptor<TextureAtlas> = AssetDescriptor("$directory/$fileName", TextureAtlas::class.java)
 ){
-    GAME_GRAPHICS("GameElements.atlas")
+    GAME_GRAPHICS(false, "GameElements.atlas"),
+    UI(true, "ui.atlas")
 }
 
 enum class SoundAsset(
@@ -43,4 +48,19 @@ enum class MusicAsset(
 ) {
     STARTMUSIC("menu.mp3"),
     TESTGAMEMUSIC("WestCoastZHU.mp3")
+}
+
+enum class BitmapFontAsset(
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<BitmapFont> = AssetDescriptor(
+                "$directory/$fileName",
+                BitmapFont::class.java,
+                BitmapFontLoader.BitmapFontParameter().apply {
+                    atlasName = TextureAtlasAsset.UI.descriptor.fileName
+                }
+        )
+){
+    FONT_LARGE_GRADIENT("font11_gradient.fnt"),
+    FONT_DEFAULT_GRADIENT("font8.fnt")
 }

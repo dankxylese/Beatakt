@@ -46,17 +46,17 @@ class GameScreen(
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
             beatMapName = "WestCoastZHU"
-            beatSongLoc = Gdx.files.external("/Music/WestCoastZHU.mp3")
+            beatSongLoc = Gdx.files.external("Beatakt/Songs/WestCoastZHU.mp3")
             length = 260f
         }
     }
     /*
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
-            beatMapName = "WestCoastZHU"
-            beatSongLoc = Gdx.files.external("/Music/WestCoastZHU.mp3")
-            length = 260f
+            beatMapLoc = Gdx.files.external("Beatakt/OdeToCharles.bm")
+            beatMapName = "OdeToCharles"
+            beatSongLoc = Gdx.files.external("Beatakt/Songs/OdeToCharles.mp3")
+            length = 252f
         }
     }*/
     /*
@@ -64,7 +64,7 @@ class GameScreen(
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/Exodus.bm")
             beatMapName = "Exodus"
-            beatSongLoc = Gdx.files.external("/Music/Exodus.mp3")
+            beatSongLoc = Gdx.files.external("Beatakt/Songs/Exodus.mp3")
             length = 176f
         }
     }*/
@@ -76,8 +76,6 @@ class GameScreen(
         log.debug { "Game BeataktScreen is Shown" }
 
 
-
-        //audioService.play(MusicAsset.STARTMUSIC)
         audioService.play(MusicAsset.TESTGAMEMUSIC)
 
         val playerHitbox = spawnPlayer()
@@ -96,16 +94,12 @@ class GameScreen(
 
         var resultBand4: MutableList<Float> = processFFT(beatMapLocation)
 
-        //log.debug { result.toString() }
-        //log.debug { bands.toString() }
-
         engine.apply {
             addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.125)/SPAWN_SPEED).toInt()))
                                                                                         //16 units is the in world height, -2 is the placement of the hitbox (the =) and -1.125 is half of the hitbox )
             addSystem(CollisionScoreSystem(playerHitbox, audioService))
             addSystem(ScoreSystem(game.gameEventManager))
         }
-        //val text: String = handle.readString()
 
 
     }
@@ -119,7 +113,6 @@ class GameScreen(
         val playerHitbox = engine.entity {
             with<TransformComponent>{
                 setInitPos(0f, 2f, 2f)
-                //bounds.y = 2f
             }
             with<PlayerComponent>()
             with<TransformCollisionComponent>{
@@ -194,11 +187,7 @@ class GameScreen(
     }
 
     private fun processFFT(beatMapLocation: FileHandle?): MutableList<Float> {
-
         var textD = ""
-        var lenght = 0f
-
-
 
         if (beatMapLocation != null) {
             textD = beatMapLocation!!.readString()
@@ -214,7 +203,7 @@ class GameScreen(
         var resultBand1: MutableList<Float> = ArrayList()
         var resultBand2: MutableList<Float> = ArrayList()
         var resultBand3: MutableList<Float> = ArrayList()
-        var resultBand4: MutableList<Float> = ArrayList()
+        var result: MutableList<Float> = ArrayList()
         var c1 = 0 //counter1
         var largest = 0.0f
         var largestPos = 0
@@ -228,7 +217,7 @@ class GameScreen(
             resultBand1.add(0f)
             resultBand2.add(0f)
             resultBand3.add(0f)
-            resultBand4.add(0f)
+            result.add(0f)
             c1++
         }
 
@@ -449,7 +438,7 @@ class GameScreen(
 
 
             if (c2helper) {
-                resultBand4[c1] = resultBand1[c1]
+                result[c1] = resultBand1[c1]
                 c1 += c2 - largestPos //move pointer to end of large scan range
                 c2helper = false
                 c2 = 0
@@ -457,7 +446,7 @@ class GameScreen(
                 largestPos = 0
             }
         }
-        return resultBand4
+        return result
     }
 
 }

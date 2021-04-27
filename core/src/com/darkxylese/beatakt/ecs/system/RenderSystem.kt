@@ -26,7 +26,7 @@ private val log = logger<RenderSystem>()
 class RenderSystem(
         private val batch: Batch,
         private val gameViewport: Viewport,
-        private val uiViewport: Viewport,
+        private val backgroundViewport: Viewport,
         background1Texture: Texture,
         background2Texture: Texture
 ) :SortedIteratingSystem(
@@ -49,8 +49,8 @@ class RenderSystem(
 
     override fun update(deltaTime: Float) {
         //Render Background
-        uiViewport.apply()
-        batch.use(uiViewport.camera.combined){
+        backgroundViewport.apply()
+        batch.use(backgroundViewport.camera.combined){
             background1.run {
                 scroll(background1ScrollSpeed.x*deltaTime, background1ScrollSpeed.y*deltaTime)
                 //setAlpha(0.2f) //between 0 and 1 / 0 being black

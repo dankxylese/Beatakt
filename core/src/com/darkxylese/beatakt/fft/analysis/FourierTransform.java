@@ -174,18 +174,6 @@ public abstract class FourierTransform
   // this enforces that responsibility
   protected abstract void allocateArrays();
 
-  protected void setComplex(float[] r, float[] i)
-  {
-    if (real.length != r.length && imag.length != i.length)
-    {
-    	throw new IllegalArgumentException( "This won't work" );
-    }
-    else
-    {
-      System.arraycopy(r, 0, real, 0, r.length);
-      System.arraycopy(i, 0, imag, 0, i.length);
-    }
-  }
 
   // fill the spectrum array with the amps of the data in real and imag
   // used so that this class can handle creating the average array
@@ -294,12 +282,6 @@ public abstract class FourierTransform
     }
   }
 
-  public float getBand(int i)
-  {
-    if (i < 0) i = 0;
-    if (i > spectrum.length - 1) i = spectrum.length - 1;
-    return spectrum[i];
-  }
 
   /**
    * Returns the width of each frequency band in the spectrum (in Hz). It should
@@ -313,34 +295,11 @@ public abstract class FourierTransform
     return bandWidth;
   }
 
-  /**
-   * Sets the amplitude of the <code>i<sup>th</sup></code> frequency band to
-   * <code>a</code>. You can use this to shape the spectrum before using
-   * <code>inverse()</code>.
-   * 
-   * @param i
-   *          the frequency band to modify
-   * @param a
-   *          the new amplitude
-   */
-  public abstract void setBand(int i, float a);
-
-  /**
-   * Scales the amplitude of the <code>i<sup>th</sup></code> frequency band
-   * by <code>s</code>. You can use this to shape the spectrum before using
-   * <code>inverse()</code>.
-   * 
-   * @param i
-   *          the frequency band to modify
-   * @param s
-   *          the scaling factor
-   */
-  public abstract void scaleBand(int i, float s);
 
   /**
    * Returns the index of the frequency band that contains the requested
    * frequency.
-   * 
+   *
    * @param freq
    *          the frequency you want the index for (in Hz)
    * @return the index of the frequency band that contains freq
@@ -355,31 +314,6 @@ public abstract class FourierTransform
     float fraction = freq / (float) sampleRate;
     int i = Math.round(timeSize * fraction);
     return i;
-  }
-  
-  /**
-   * Returns the middle frequency of the i<sup>th</sup> band.
-   * @param i
-   *        the index of the band you want to middle frequency of
-   */
-  public float indexToFreq(int i)
-  {
-    float bw = getBandWidth();
-    // special case: the width of the first bin is half that of the others.
-    //               so the center frequency is a quarter of the way.
-    if ( i == 0 ) return bw * 0.25f;
-    // special case: the width of the last bin is half that of the others.
-    if ( i == spectrum.length - 1 ) 
-    {
-      float lastBinBeginFreq = (sampleRate / 2) - (bw / 2);
-      float binHalfWidth = bw * 0.25f;
-      return lastBinBeginFreq + binHalfWidth;
-    }
-    // the center frequency of the ith band is simply i*bw
-    // because the first band is half the width of all others.
-    // treating it as if it wasn't offsets us to the middle 
-    // of the band.
-    return i*bw;
   }
 
   /**

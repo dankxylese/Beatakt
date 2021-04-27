@@ -162,26 +162,6 @@ public class FFT extends FourierTransform
   }
 
 
-  public void inverse(float[] buffer)
-  {
-    if (buffer.length > real.length)
-    {
-    	throw new IllegalArgumentException("FFT.inverse: the passed array's length must equal FFT.timeSize().");
-    }
-    // conjugate
-    for (int i = 0; i < timeSize; i++)
-    {
-      imag[i] *= -1;
-    }
-    bitReverseComplex();
-    fft();
-    // copy the result in real into buffer, scaling as we do
-    for (int i = 0; i < buffer.length; i++)
-    {
-      buffer[i] = real[i] / real.length;
-    }
-  }
-
   private int[] reverse;
 
   private void buildReverseTable()
@@ -207,22 +187,7 @@ public class FFT extends FourierTransform
     }
   }
 
-  // bit reverse real[] and imag[]
-  private void bitReverseComplex()
-  {
-    float[] revReal = new float[real.length];
-    float[] revImag = new float[imag.length];
-    for (int i = 0; i < real.length; i++)
-    {
-      revReal[i] = real[reverse[i]];
-      revImag[i] = imag[reverse[i]];
-    }
-    real = revReal;
-    imag = revImag;
-  }
-
   // lookup tables
-
   private float[] sinlookup;
   private float[] coslookup;
 

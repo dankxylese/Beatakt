@@ -7,7 +7,6 @@ import com.darkxylese.beatakt.fft.visualization.PlaybackVisualizer;
 import com.darkxylese.beatakt.fft.visualization.Plot;
 
 
-import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -16,7 +15,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiBandThreshold
+public class FFTCalculation
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
