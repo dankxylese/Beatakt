@@ -1,5 +1,6 @@
 package com.darkxylese.beatakt.screen
 
+import com.badlogic.gdx.Preferences
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.darkxylese.beatakt.Beatakt
 import com.darkxylese.beatakt.audio.AudioService
@@ -16,7 +17,8 @@ abstract class BeataktScreen(
         val uiViewport: Viewport = game.uiViewport,
         val assets: AssetStorage = game.assets,
         val audioService: AudioService = game.audioService,
-        val gameEventManager: GameEventManager = game.gameEventManager
+        val gameEventManager: GameEventManager = game.gameEventManager,
+        val preferences: Preferences = game.preferences
 ) : KtxScreen {
 
 

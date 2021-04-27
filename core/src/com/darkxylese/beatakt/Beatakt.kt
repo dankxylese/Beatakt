@@ -48,8 +48,6 @@ class Beatakt : KtxGame<KtxScreen>() {
     val gameEventManager = GameEventManager()
     val engine: Engine by lazy { //by first use the assets are already loaded
 
-        preferences["key"] = 3.5f
-
         PooledEngine().apply {
 
             val graphicsAtlas = assets[TextureAtlasAsset.GAME_GRAPHICS.descriptor]

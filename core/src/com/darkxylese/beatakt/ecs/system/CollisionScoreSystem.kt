@@ -57,7 +57,7 @@ class CollisionScoreSystem(
 
 
             if (playerCmp.nextEvent != GameEventType.NONE) {
-                log.debug {"Last Event: "+ playerCmp.nextEvent.toString() }
+                //log.debug {"Last Event: "+ playerCmp.nextEvent.toString() }
                 entity[TransformComponent.mapper]?.let { transform -> //remove when entity goes off screen (with touch)
                     //log.debug {"Objects on screen " + transform.bounds.toString()}
                     //log.debug {"Player " + playerCollisionBox.toString()}
@@ -65,9 +65,10 @@ class CollisionScoreSystem(
                         popOverboardObject(entity)
                         transform.belowHitBox = true
                     }
-                    if (transform.position.y < -2f) {
+                    if (transform.position.y < -2f && !transform.removedObject) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
+                        transform.removedObject = true
                         //playerCmp.nextEvent = GameEventType.NONE
                         //log.debug {"Removed Game Event" }
 
@@ -81,7 +82,7 @@ class CollisionScoreSystem(
                         //log.debug { speed.toString() }
 
                         //add appropriate score if hit
-                        if (graphicCmp.timeSinceCreation >= (veryEarly.x + adjustDelay) / speed!! && graphicCmp.timeSinceCreation < (veryEarly.y + adjustDelay) / speed) { //very early 50
+                        if (graphicCmp.timeSinceCreation < (veryEarly.y + adjustDelay) / speed!!) { //very early 50 speed never null
                             scoreCalc(50, "very early")
                         } else if (graphicCmp.timeSinceCreation >= (early.x + adjustDelay) / speed && graphicCmp.timeSinceCreation < (early.y + adjustDelay) / speed) { //early 100
                             scoreCalc(100, "early")
@@ -89,11 +90,11 @@ class CollisionScoreSystem(
                             scoreCalc(300, "perfect")
                         } else if (graphicCmp.timeSinceCreation >= (late.x + adjustDelay) / speed && graphicCmp.timeSinceCreation < (late.y + adjustDelay) / speed) { //late 100
                             scoreCalc(100, "late")
-                        } else if (graphicCmp.timeSinceCreation >= (veryLate.x + adjustDelay) / speed && graphicCmp.timeSinceCreation < (veryLate.y + adjustDelay) / speed) { //very late 50
+                        } else if (graphicCmp.timeSinceCreation > (veryLate.x + adjustDelay) / speed) { //very late 50
                             scoreCalc(50, "very late")
-                        } else { // overlapped too late (or frames were delivered too slowly and not in time (as this is a time dependent and not fps, calculation)) = miss
-                            scoreCalc(0, "miss")
-                        }
+                        } //else { // overlapped too late (or frames were delivered too slowly and not in time (as this is a time dependent and not fps, calculation)) = miss
+                            //scoreCalc(0, "miss")
+                        //}
                         scoreCmp.hits++
                         //hitSound.play()
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
@@ -115,9 +116,10 @@ class CollisionScoreSystem(
                         popOverboardObject(entity)
                         transform.belowHitBox = true
                     }
-                    if (transform.position.y < -2f) {
+                    if (transform.position.y < -2f && !transform.removedObject) {
                         graphicCmp.timeSinceCreation = 0f //clean time for when entity gets reused
                         scoreCalc(0, "miss")
+                        transform.removedObject = true
                         scoreCmp.currentObjects
                         entity.addComponent<RemoveComponent>(engine)
                     }

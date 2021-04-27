@@ -14,6 +14,7 @@ class TransformComponent : Component, Pool.Poolable, Comparable<TransformCompone
     var belowHitBox = false
     val size = Vector2(9f/(1080/270), 16f/(1920/270)) // 9f/(1080/texture.width), 16f/(1920/texture.height) 270x270
     var bounds = Rectangle()
+    var removedObject = false
 
 
     override fun reset() {
@@ -23,6 +24,7 @@ class TransformComponent : Component, Pool.Poolable, Comparable<TransformCompone
         size.set(9f/(1080/270), 16f/(1920/270))
         bounds = Rectangle(0f,0f,0f,0f)
         belowHitBox = false
+        removedObject = false
     }
 
     fun setInitPos(x: Float, y: Float, z: Float) {

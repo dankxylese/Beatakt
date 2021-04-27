@@ -12,6 +12,7 @@ import com.darkxylese.beatakt.ecs.system.ScoreSystem
 import com.darkxylese.beatakt.ecs.system.SpawnSystem
 import com.darkxylese.beatakt.event.GameEvent
 import com.darkxylese.beatakt.event.GameEventListener
+import com.darkxylese.beatakt.event.GameEventPlayerDeath
 import com.darkxylese.beatakt.event.GameEventType
 import ktx.ashley.entity
 import ktx.ashley.get
@@ -19,6 +20,9 @@ import ktx.ashley.getSystem
 import ktx.ashley.with
 import ktx.log.debug
 import ktx.log.logger
+import ktx.preferences.flush
+import ktx.preferences.get
+import ktx.preferences.set
 import java.lang.Float.min
 
 
@@ -69,6 +73,8 @@ class GameScreen(
         gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
         log.debug { "Game BeataktScreen is Shown" }
 
+
+
         audioService.play(MusicAsset.STARTMUSIC)
 
         val playerHitbox = spawnPlayer()
@@ -80,6 +86,7 @@ class GameScreen(
             if (score != null) {
                 beatMapLocation = score.beatMapLoc
                 lenght = score.length
+                log.debug { "${preferences[score.beatMapName, 0f]}" }
             }
         }
 
@@ -161,6 +168,12 @@ class GameScreen(
         if (type == GameEventType.PLAYER_DEATH){
             log.debug { "PLAYER DIED" }
             engine.getSystem<SpawnSystem>().setProcessing(false)
+            val eventData = data as GameEventPlayerDeath
+            score[ScoreComponent.mapper].let { score ->
+                preferences.flush {
+                    this[score!!.beatMapName] = (eventData.score)
+                }
+            }
         }
     }
 
