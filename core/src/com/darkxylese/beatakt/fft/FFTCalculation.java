@@ -7,6 +7,7 @@ import com.darkxylese.beatakt.fft.visualization.PlaybackVisualizer;
 import com.darkxylese.beatakt.fft.visualization.Plot;
 
 
+import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -19,7 +20,7 @@ public class FFTCalculation
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
-	public static final String FILE = "/home/manse/Beatakt/Songs/Song2.mp3";
+	public static final String FILE = "/home/manse/Beatakt/Songs/DiscoFries.mp3";
 	public static final int HOP_SIZE = 512;
 	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
@@ -31,9 +32,9 @@ public class FFTCalculation
 		SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, 1024, HOP_SIZE, true );
 		float[] spectrum = spectrumProvider.nextSpectrum();
 		float[] lastSpectrum = new float[spectrum.length];		
-		List<List<Float>> spectralFlux = new ArrayList<List<Float>>( );
+		List<List<Float>> signalFluctuations = new ArrayList<List<Float>>( );
 		for( int i = 0; i < bands.length / 2; i++ )
-			spectralFlux.add( new ArrayList<Float>( ) );
+			signalFluctuations.add( new ArrayList<Float>( ) );
 		//makes half the bands number of empty (arrays[1]), as filler data inside the (array of arrays[2])
 		//6 bands = 3 arrays[1]
 
@@ -50,7 +51,7 @@ public class FFTCalculation
 					value = (value + Math.abs(value))/2;
 					flux += value;
 				}
-				spectralFlux.get(i/2).add( flux );
+				signalFluctuations.get(i/2).add( flux );
 			}
 					
 			System.arraycopy( spectrum, 0, lastSpectrum, 0, spectrum.length );
@@ -65,38 +66,38 @@ public class FFTCalculation
 		List<List<Float>> thresholds = new ArrayList<List<Float>>( );
 		for( int i = 0; i < bands.length / 2; i++ )
 		{
-			List<Float> threshold = new ThresholdFunction( HISTORY_SIZE, multipliers[i] ).calculate( spectralFlux.get(i) );
+			List<Float> threshold = new ThresholdFunction( HISTORY_SIZE, multipliers[i] ).calculate( signalFluctuations.get(i) );
 			thresholds.add( threshold );
 		}
 
 		//write to file
-		outputFile(spectralFlux, thresholds, decoder.getDuration());
+		outputFile(signalFluctuations, thresholds, decoder.getDuration());
 
-		/*
+
 		Plot plot = new Plot( "SignalFluctuations", 1024, 512 );
 		for( int i = 0; i < bands.length / 2; i++ )
 		{
-			plot.plot( spectralFlux.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
+			plot.plot( signalFluctuations.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
 			plot.plot( thresholds.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, true, Color.green );
 		}
 		
 		new PlaybackVisualizer( plot, HOP_SIZE, new MP3Decoder( new FileInputStream( FILE ) ) );
-		*/
+
 
 	}
 
-	static public void outputFile(List<List<Float>> spectralFlux, List<List<Float>> thresholds, int duration){
+	static public void outputFile(List<List<Float>> signalFluctuations, List<List<Float>> thresholds, int duration){
 		try{
-		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/Song2.bm", "rw");
+		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/DiscoFries.bm", "rw");
 		stream.setLength(0); //clear file before hand
 		FileChannel channel = stream.getChannel();
 		int k = 0;
 
 		for( int i = 0; i < bands.length; i+=2 ){ //for each band
-			for (int j = 0; j < spectralFlux.get(i/2).size(); j++){ //for each float in a band
+			for (int j = 0; j < signalFluctuations.get(i/2).size(); j++){ //for each float in a band
 				float val = 0.00000f;
-					if ((spectralFlux.get(i/2).get(j) - thresholds.get(i/2).get(j)) > 0.00001f){
-						val = (spectralFlux.get(i/2).get(j) - thresholds.get(i/2).get(j));
+					if ((signalFluctuations.get(i/2).get(j) - thresholds.get(i/2).get(j)) > 0.00001f){
+						val = (signalFluctuations.get(i/2).get(j) - thresholds.get(i/2).get(j));
 					}
 					String value = (Math.round((val) * 100000f) / 100000f + ",");
 					outputFileHelper(channel, value);
