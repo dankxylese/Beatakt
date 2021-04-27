@@ -18,6 +18,7 @@ import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.inject.Context
 import ktx.async.KtxAsync
+import ktx.inject.register
 import ktx.log.debug
 import ktx.log.logger
 
