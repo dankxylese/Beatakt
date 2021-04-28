@@ -20,7 +20,6 @@ class CollisionScoreSystem(
         playerHitbox : Entity,
         private val audioService: AudioService
 ) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()){
-    //private val playerHit = playerHitbox[TransformCollisionComponent.mapper]!!.bounds //collision box of hitbox
     private val playerCollisionBox = playerHitbox[TransformCollisionComponent.mapper]!!.bounds
     private val scoreCmp = playerHitbox[ScoreComponent.mapper]!!
     private val playerCmp = playerHitbox[PlayerComponent.mapper]!!
@@ -72,7 +71,7 @@ class CollisionScoreSystem(
                         //playerCmp.nextEvent = GameEventType.NONE
                         //log.debug {"Removed Game Event" }
 
-                        if (popObject(entity)) {   //pop object from tracker
+                        if (popObject(entity)) {   //check if next object
                             entity.addComponent<RemoveComponent>(engine)
                         }
                     }

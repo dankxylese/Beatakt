@@ -42,6 +42,7 @@ class GameScreen(
         private val engine: Engine = game.engine,
 ) : GameEventListener, BeataktScreen(game) {
 
+    /*
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
@@ -49,8 +50,7 @@ class GameScreen(
             beatSongLoc = Gdx.files.external("Beatakt/Songs/WestCoastZHU.mp3")
             length = 260f
         }
-    }
-    /*
+    }*/
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/OdeToCharles.bm")
@@ -58,7 +58,8 @@ class GameScreen(
             beatSongLoc = Gdx.files.external("Beatakt/Songs/OdeToCharles.mp3")
             length = 252f
         }
-    }*/
+    }
+
     /*
     private val score = engine.entity {
         with<ScoreComponent>{
@@ -76,7 +77,9 @@ class GameScreen(
         log.debug { "Game BeataktScreen is Shown" }
 
 
-        audioService.play(MusicAsset.TESTGAMEMUSIC)
+        //audioService.play(MusicAsset.WestCoast)
+        //audioService.play(MusicAsset.Exodus)
+        audioService.play(MusicAsset.OdeToCharles)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
@@ -164,6 +167,7 @@ class GameScreen(
     override fun onEvent(type: GameEventType, data: GameEvent?) {
         if (type == GameEventType.PLAYER_DEATH){
             log.debug { "PLAYER DIED" }
+            audioService.stop()
             engine.getSystem<SpawnSystem>().setProcessing(false)
             val eventData = data as GameEventPlayer
             score[ScoreComponent.mapper].let { score ->
@@ -175,6 +179,7 @@ class GameScreen(
 
         if (type == GameEventType.ENDGAME){
             log.debug { "PLAYER FINISHED" }
+            audioService.stop()
             engine.getSystem<SpawnSystem>().setProcessing(false)
             val eventData = data as GameEventPlayer
             score[ScoreComponent.mapper].let { score ->

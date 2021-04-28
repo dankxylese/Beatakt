@@ -47,7 +47,10 @@ enum class MusicAsset(
         val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
 ) {
     STARTMUSIC("menu.mp3"),
-    TESTGAMEMUSIC("WestCoastZHU.mp3")
+    WestCoast("WestCoastZHU.mp3"),
+    Exodus("Exodus.mp3"),
+    OdeToCharles("OdeToCharles.mp3")
+
 }
 
 enum class BitmapFontAsset(

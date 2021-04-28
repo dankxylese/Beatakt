@@ -31,7 +31,6 @@ class TextureSystem(
 
 
     override fun entityAdded(entity: Entity) {
-        //entity[GraphicComponent.mapper]?.setSpriteRegion(hitboxBorderRegion) //temporary testure
     }
 
     override fun entityRemoved(entity: Entity?) = Unit

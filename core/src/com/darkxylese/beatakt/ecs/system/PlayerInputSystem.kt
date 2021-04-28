@@ -119,7 +119,6 @@ class PlayerInputSystem(
             }
             transform.interpPos.x = touchPosVecUnprj.x - 1.125f
         }
-         //Updates the visual representation of the player hit
         //log.debug { "Pos: ${transform.interpPos.x}, ${transform.interpPos.y} // Box: ${transformCol.bounds.x}, ${transformCol.bounds.y}" }
     }
     fun updateCollBox(transformCol: TransformCollisionComponent, newPos: Float) { //important to update the collision box before we send an event

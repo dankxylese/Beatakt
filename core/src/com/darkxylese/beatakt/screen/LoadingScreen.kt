@@ -40,7 +40,7 @@ class LoadingScreen(game: Beatakt) : BeataktScreen(game) {
                 TextureAsset.values().map { assets.loadAsync(it.descriptor)},
                 TextureAtlasAsset.values().map {assets.loadAsync(it.descriptor)},
                 SoundAsset.values().map {assets.loadAsync(it.descriptor)}
-        ).flatten() //flatten the entire list. Before we had an array, so we make it into a list
+        ).flatten() //flatten the entire list. Before we had an array, now we have a list = quicker access
 
 
 
