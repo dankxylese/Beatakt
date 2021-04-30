@@ -1,4 +1,4 @@
-# Beatakt - Rhythm game using FFT to generate beat maps in LibKtx
+# Beatakt - Rhythm game using FFT to generate beat maps. Made with LibKtx
 
 Working build, as seen in my Thesis on it. May or may not continue working on it later. Currently there is a limitation to the algorithm, LibGtx uses its own javazoom, which is stripped off the components I need for it. A solution would be to include the FFT part on its own, then have the game call the .jar file with some args about the song position. It might not be worth it, and a separate algorithm might have to be used to make a "whole" game, but as it is its a good proof of concept that you can make such a game.
 
