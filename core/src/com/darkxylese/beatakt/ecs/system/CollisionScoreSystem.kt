@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2
 import com.darkxylese.beatakt.assets.SoundAsset
 import com.darkxylese.beatakt.audio.AudioService
 import com.darkxylese.beatakt.ecs.component.*
+import com.darkxylese.beatakt.event.GameEventManager
+import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
 import com.darkxylese.beatakt.screen.HITBOX_HEIGHT
 import ktx.ashley.addComponent
@@ -18,7 +20,8 @@ private val log = logger<CollisionScoreSystem>()
 
 class CollisionScoreSystem(
         playerHitbox : Entity,
-        private val audioService: AudioService
+        private val audioService: AudioService,
+        private val eventManager: GameEventManager
 ) : IteratingSystem(allOf(TransformComponent::class, CollisionComponent::class).get()){
     private val playerCollisionBox = playerHitbox[TransformCollisionComponent.mapper]!!.bounds
     private val scoreCmp = playerHitbox[ScoreComponent.mapper]!!
@@ -38,20 +41,20 @@ class CollisionScoreSystem(
             val adjustDelay = 0
 
             val veryEarly = Vector2()
-            veryEarly.x = 13F
-            veryEarly.y = 13.5F
+            veryEarly.x = 13.6F
+            veryEarly.y = 14.1F
             val early = Vector2()
-            early.x = 13.5F
-            early.y = 13.8F
+            early.x = 14.1F
+            early.y = 14.4F
             val perfect = Vector2()
-            perfect.x = 13.8F
-            perfect.y = 14.2F
+            perfect.x = 14.4F
+            perfect.y = 14.67F
             val late = Vector2()
-            late.x = 14.2F
-            late.y = 14.5F
+            late.x = 14.67F
+            late.y = 14.97F
             val veryLate = Vector2()
-            veryLate.x = 14.5F
-            veryLate.y = 15F
+            veryLate.x = 14.97F
+            veryLate.y = 15.47F
 
 
 
@@ -77,8 +80,8 @@ class CollisionScoreSystem(
                     }
                     if (transform.bounds.overlaps(playerCollisionBox)) {
                         if (popObject(entity)) {  //finds the next in ID order hit so that higher hits don't get removed first (returns false if not first to be removed)
-                        log.debug { graphicCmp.timeSinceCreation.toString() }
-                        //log.debug { speed.toString() }
+                        log.debug { "Time: ${graphicCmp.timeSinceCreation} More than or is ${(perfect.y + adjustDelay) / speed!!}" }
+
 
                         //add appropriate score if hit
                         if (graphicCmp.timeSinceCreation < (veryEarly.y + adjustDelay) / speed!!) { //very early 50 speed never null
@@ -141,19 +144,19 @@ class CollisionScoreSystem(
             scoreCmp.s50count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 50 + (50 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak = 0
+            scoreCmp.missStreak -= 1
         }
         if (howAccurateHit == 100) {
             scoreCmp.s100count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 100 + (100 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak = 0
+            scoreCmp.missStreak -= 1
         }
         if (howAccurateHit == 300) {
             scoreCmp.s300count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 300 + (300 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak = 0
+            scoreCmp.missStreak -= 1
         }
 
         if (scoreCmp.streak > scoreCmp.bestStreak){ //save best streak
@@ -161,6 +164,14 @@ class CollisionScoreSystem(
         }
 
         scoreCmp.accuracy = howTimedHit
+        eventManager.dispatchEvent(
+                GameEventType.TOUCH,
+                GameEventPlayer.apply {
+                    this.score = scoreCmp.score
+                    this.missStreak = scoreCmp.missStreak
+                    this.accu = scoreCmp.accuracy
+                    this.streak = scoreCmp.streak
+                })
     }
 
     fun popObject(entity: Entity) : Boolean { //pops the first object from object tracker

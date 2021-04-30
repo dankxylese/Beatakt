@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.darkxylese.beatakt.Beatakt
+import com.darkxylese.beatakt.assets.I18NBundleAsset
 import com.darkxylese.beatakt.assets.SoundAsset
 import com.darkxylese.beatakt.assets.TextureAsset
 import com.darkxylese.beatakt.assets.TextureAtlasAsset
@@ -39,7 +40,8 @@ class LoadingScreen(game: Beatakt) : BeataktScreen(game) {
         val assetRefs = gdxArrayOf( //asset manager that takes care of asset handling
                 TextureAsset.values().map { assets.loadAsync(it.descriptor)},
                 TextureAtlasAsset.values().map {assets.loadAsync(it.descriptor)},
-                SoundAsset.values().map {assets.loadAsync(it.descriptor)}
+                SoundAsset.values().map {assets.loadAsync(it.descriptor)},
+                I18NBundleAsset.values().map { assets.loadAsync(it.descriptor) }
         ).flatten() //flatten the entire list. Before we had an array, now we have a list = quicker access
 
 

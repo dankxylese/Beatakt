@@ -7,6 +7,7 @@ enum class GameEventType{
     NONE,
     PLAYER_DEATH,
     ENDGAME,
+    TOUCH,
     TOUCH1,
     TOUCH2,
     TOUCH3,
@@ -26,6 +27,9 @@ object GameEventPlayer : GameEvent {
     var s100count = 0
     var s300count = 0
     var bestStreak = 0
+    var missStreak = 0
+    var streak = 0
+    var accu = ""
 
     override fun toString() = "GameEventPlayer(Hits= $hits)"
 }

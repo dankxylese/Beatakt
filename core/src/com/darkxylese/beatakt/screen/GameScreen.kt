@@ -4,7 +4,9 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.darkxylese.beatakt.Beatakt
+import com.darkxylese.beatakt.assets.I18NBundleAsset
 import com.darkxylese.beatakt.assets.MusicAsset
 import com.darkxylese.beatakt.ecs.component.*
 import com.darkxylese.beatakt.ecs.system.CollisionScoreSystem
@@ -14,6 +16,8 @@ import com.darkxylese.beatakt.event.GameEvent
 import com.darkxylese.beatakt.event.GameEventListener
 import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
+import com.darkxylese.beatakt.ui.GameUi
+import ktx.actors.plusAssign
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.getSystem
@@ -34,13 +38,14 @@ const val SPAWN_SPEED = 10f
 const val BANDS_FILTER_STRENGHT = 0.2f //0.29
 const val BAND1_FILTER_POST_LIMIT = 20f //30
 const val BANDS23_FILTER_POST_LIMIT = 7f //10
-const val MISSES_ALLOWED = 5
+const val MISSES_ALLOWED = 8
 const val SCAN_RANGE = 25
 
 class GameScreen(
         game: Beatakt,
         private val engine: Engine = game.engine,
 ) : GameEventListener, BeataktScreen(game) {
+    private val ui = GameUi(assets[I18NBundleAsset.DEFAULT.descriptor])
 
     /*
     private val score = engine.entity {
@@ -74,6 +79,8 @@ class GameScreen(
     override fun show() {
         gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
         gameEventManager.addListener(GameEventType.ENDGAME, this)
+        gameEventManager.addListener(GameEventType.TOUCH, this)
+
         log.debug { "Game BeataktScreen is Shown" }
 
 
@@ -100,10 +107,11 @@ class GameScreen(
         engine.apply {
             addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.125)/SPAWN_SPEED).toInt()))
                                                                                         //16 units is the in world height, -2 is the placement of the hitbox (the =) and -1.125 is half of the hitbox )
-            addSystem(CollisionScoreSystem(playerHitbox, audioService))
+            addSystem(CollisionScoreSystem(playerHitbox, audioService, gameEventManager))
             addSystem(ScoreSystem(game.gameEventManager))
         }
 
+        setupUI()
 
     }
 
@@ -159,9 +167,30 @@ class GameScreen(
 
     }
 
+    private fun setupUI() {
+        ui.run {
+            // reset to initial values
+            updateScore(0)
+            updateLife(
+                    MISSES_ALLOWED,
+                    MISSES_ALLOWED
+            )
+            updateAccu("")
+        }
+        stage += ui
+    }
+
     override fun render(delta: Float) {
         engine.update(min(MAX_DELTA_TIME, delta))
         audioService.update()
+
+        val deltaTime = kotlin.math.min(delta, MAX_DELTA_TIME)
+        // render UI
+        stage.run {
+            viewport.apply()
+            act(deltaTime)
+            draw()
+        }
     }
 
     override fun onEvent(type: GameEventType, data: GameEvent?) {
@@ -174,6 +203,18 @@ class GameScreen(
                 preferences.flush {
                     this[score!!.beatMapName] = (eventData.score)
                 }
+            }
+        }
+
+        if (type == GameEventType.TOUCH){
+            val eventData = data as GameEventPlayer
+            ui.run {
+                updateScore(eventData.score)
+                log.debug {eventData.score.toString()}
+                log.debug { "UPDATE SCORE" }
+                updateLife(MISSES_ALLOWED - eventData.missStreak, MISSES_ALLOWED)
+                updateAccu(eventData.accu)
+                updateStreak("X${eventData.streak}")
             }
         }
 

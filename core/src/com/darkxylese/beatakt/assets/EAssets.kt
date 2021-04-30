@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import ktx.assets.getAsset
 import ktx.assets.load
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.I18NBundle
 import com.sun.org.apache.xpath.internal.operations.Bool
 
 enum class TextureAsset(
@@ -66,4 +67,12 @@ enum class BitmapFontAsset(
 ){
     FONT_LARGE_GRADIENT("font11_gradient.fnt"),
     FONT_DEFAULT_GRADIENT("font8.fnt")
+}
+
+enum class I18NBundleAsset(
+        fileName: String,
+        directory: String = "i18n",
+        val descriptor: AssetDescriptor<I18NBundle> = AssetDescriptor("$directory/$fileName", I18NBundle::class.java)
+) {
+    DEFAULT("i18n")
 }

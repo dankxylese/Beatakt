@@ -1,25 +1,16 @@
 package com.darkxylese.beatakt.ecs.system
 
 import com.badlogic.ashley.core.Entity
-import com.badlogic.ashley.systems.IntervalIteratingSystem
 import com.badlogic.ashley.systems.IntervalSystem
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.utils.viewport.Viewport
 import com.darkxylese.beatakt.ecs.component.*
 import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
-import com.darkxylese.beatakt.screen.GameScreen
-import com.darkxylese.beatakt.screen.MISSES_ALLOWED
 import com.darkxylese.beatakt.screen.SPAWN_SPEED
-import ktx.ashley.allOf
 import ktx.ashley.entity
 import ktx.ashley.get
 import ktx.ashley.with
-import ktx.assets.file
 import ktx.log.debug
 import ktx.log.logger
 
