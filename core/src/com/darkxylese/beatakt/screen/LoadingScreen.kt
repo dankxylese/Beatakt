@@ -50,7 +50,7 @@ class LoadingScreen(game: Beatakt) : BeataktScreen(game) {
         KtxAsync.launch { //non blocking
             assetRefs.joinAll()
             //loading is done
-            log.debug { "Time for loading assets : ${System.currentTimeMillis() - old} ms" }
+            //log.debug { "Time for loading assets : ${System.currentTimeMillis() - old} ms" }
             assetsLoaded()
         }
 

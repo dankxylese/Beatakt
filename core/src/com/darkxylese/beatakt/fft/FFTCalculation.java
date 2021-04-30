@@ -20,7 +20,7 @@ public class FFTCalculation
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
-	public static final String FILE = "/home/manse/Beatakt/Songs/DiscoFries.mp3";
+	public static final String FILE = "/home/manse/Beatakt/Songs/WestCoastZHU.mp3";
 	public static final int HOP_SIZE = 512;
 	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
@@ -80,15 +80,15 @@ public class FFTCalculation
 			plot.plot( signalFluctuations.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
 			plot.plot( thresholds.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, true, Color.green );
 		}
-		
-		new PlaybackVisualizer( plot, HOP_SIZE, new MP3Decoder( new FileInputStream( FILE ) ) );
+
+		//new PlaybackVisualizer( plot, HOP_SIZE, new MP3Decoder( new FileInputStream( FILE ) ) );
 
 
 	}
 
 	static public void outputFile(List<List<Float>> signalFluctuations, List<List<Float>> thresholds, int duration){
 		try{
-		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/DiscoFries.bm", "rw");
+		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/WestCoastZHU.bm", "rw");
 		stream.setLength(0); //clear file before hand
 		FileChannel channel = stream.getChannel();
 		int k = 0;

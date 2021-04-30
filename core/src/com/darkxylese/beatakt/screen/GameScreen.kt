@@ -46,16 +46,15 @@ class GameScreen(
         private val engine: Engine = game.engine,
 ) : GameEventListener, BeataktScreen(game) {
     private val ui = GameUi(assets[I18NBundleAsset.DEFAULT.descriptor])
-
-
+            /*
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
             beatMapName = "WestCoastZHU"
             beatSongLoc = Gdx.files.external("Beatakt/Songs/WestCoastZHU.mp3")
-            length = 260f
+            length = 185f
         }
-    }
+    }*/
     /*
     private val score = engine.entity {
         with<ScoreComponent>{
@@ -66,7 +65,7 @@ class GameScreen(
         }
     }*/
 
-    /*
+
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/Exodus.bm")
@@ -74,7 +73,7 @@ class GameScreen(
             beatSongLoc = Gdx.files.external("Beatakt/Songs/Exodus.mp3")
             length = 176f
         }
-    }*/
+    }
 
 
     override fun show() {
@@ -84,9 +83,9 @@ class GameScreen(
 
         log.debug { "Game BeataktScreen is Shown" }
 
-        audioService.play(MusicAsset.WestCoast)
-        //audioService.play(MusicAsset.Exodus)
-        //audioService.play(MusicAsset.OdeToCharles)
+        //audioService.play(MusicAsset.WestCoast, 0.3f)
+        audioService.play(MusicAsset.Exodus, 0.5f)
+        //audioService.play(MusicAsset.OdeToCharles, 0.5f)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
@@ -105,7 +104,7 @@ class GameScreen(
         var resultBand4: MutableList<Float> = processFFT(beatMapLocation)
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.125)/SPAWN_SPEED).toInt()))
+            addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.5)/SPAWN_SPEED).toInt()))
                                                                                         //16 units is the in world height, -2 is the placement of the hitbox (the =) and -1.125 is half of the hitbox )
             addSystem(CollisionScoreSystem(playerHitbox, audioService, gameEventManager))
             addSystem(ScoreSystem(game.gameEventManager))
@@ -127,7 +126,7 @@ class GameScreen(
             }
             with<PlayerComponent>()
             with<TransformCollisionComponent>{
-                setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.8f, (16f/(1920/270))*1.8f)
+                setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.8f, (16f/(1920/270))*1.3f)
             }
             with<ScoreComponent>()
             with<GraphicComponent>{id=SpriteIDs.PLAYER}
@@ -210,8 +209,8 @@ class GameScreen(
             val eventData = data as GameEventPlayer
             ui.run {
                 updateScore(eventData.score)
-                log.debug {eventData.score.toString()}
-                log.debug { "UPDATE SCORE" }
+                //log.debug {eventData.score.toString()}
+                //log.debug { "UPDATE SCORE" }
                 updateLife(MISSES_ALLOWED - eventData.missStreak, MISSES_ALLOWED)
                 updateAccu(eventData.accu)
                 updateStreak("X${eventData.streak}")

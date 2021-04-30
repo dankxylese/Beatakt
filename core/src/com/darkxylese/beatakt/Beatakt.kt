@@ -29,7 +29,6 @@ import ktx.log.debug
 import ktx.log.logger
 
 
-const val UNIT_SCALE = 1/10f
 const val V_WIDTH = 9
 const val V_HEIGHT = 16
 const val V_WIDTH_PIXELS_BG = 720

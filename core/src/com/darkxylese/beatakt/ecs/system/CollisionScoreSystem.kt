@@ -82,7 +82,7 @@ class CollisionScoreSystem(
                     }
                     if (transform.bounds.overlaps(playerCollisionBox)) {
                         if (popObject(entity)) {  //finds the next in ID order hit so that higher hits don't get removed first (returns false if not first to be removed)
-                        log.debug { "Time: ${graphicCmp.timeSinceCreation} More than or is ${(perfect.y + adjustDelay) / speed!!}" }
+                        //log.debug { "Time: ${graphicCmp.timeSinceCreation} More than or is ${(perfect.y + adjustDelay) / speed!!}" }
 
 
                         //add appropriate score if hit
@@ -105,8 +105,8 @@ class CollisionScoreSystem(
 
                             entity.addComponent<RemoveComponent>(engine)
                             playerCmp.nextEvent = GameEventType.NONE // remove only if when the correct hit block is found. otherwise
-                            log.debug {"Removed Game Event" }
-                            audioService.play(SoundAsset.HIT, 0.3f)
+                            //log.debug {"Removed Game Event" }
+                            audioService.play(SoundAsset.HIT, 0.1f)
                         }
                     }
                     if (!transform.bounds.overlaps(playerCollisionBox)){
@@ -140,7 +140,7 @@ class CollisionScoreSystem(
             scoreCmp.s0count += 1
             scoreCmp.streak = 0
             scoreCmp.missStreak += 1
-            log.debug { "Missed Hit, Streak = ${scoreCmp.missStreak}, isDead = ${scoreCmp.isDead}" }
+            //log.debug { "Missed Hit, Streak = ${scoreCmp.missStreak}, isDead = ${scoreCmp.isDead}" }
         }
         if (howAccurateHit == 50) {
             scoreCmp.s50count += 1
@@ -182,7 +182,7 @@ class CollisionScoreSystem(
             //log.debug {ID.id.toString()}
             //log.debug {scoreCmp.currentObjects.peek().toString()}
             return if (scoreCmp.currentObjects.peek() == ID.id){
-                log.debug {"Removed object"}
+                //log.debug {"Removed object"}
                 true
             } else {
                 //log.debug {"Failed to remove // Tried to remove an object out of order"}
