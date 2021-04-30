@@ -79,7 +79,7 @@ class GameUi(bundle: I18NBundle) : Group() {
         this += streakLabel.apply {
             setPosition(
                     2f,
-                    V_HEIGHT_PIXELS * 0.01f
+                    V_HEIGHT_PIXELS * 0.02f
 
             )
         }
@@ -95,7 +95,7 @@ class GameUi(bundle: I18NBundle) : Group() {
     }
 
     fun updateLife(life: Int, maxLife: Int) {
-        lifeBarImage.scaleX = MathUtils.clamp(life.toFloat() / (maxLife+1).toFloat(), 0f, 1f)
+        lifeBarImage.scaleX = MathUtils.clamp(life.toFloat() / maxLife.toFloat(), 0f, 1f)
     }
 
     fun updateAccu(accu: String) {

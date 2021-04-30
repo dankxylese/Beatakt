@@ -2,6 +2,7 @@ package com.darkxylese.beatakt.ecs.system
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.systems.IteratingSystem
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.darkxylese.beatakt.assets.SoundAsset
 import com.darkxylese.beatakt.audio.AudioService
@@ -10,6 +11,7 @@ import com.darkxylese.beatakt.event.GameEventManager
 import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
 import com.darkxylese.beatakt.screen.HITBOX_HEIGHT
+import com.darkxylese.beatakt.screen.MISSES_ALLOWED
 import ktx.ashley.addComponent
 import ktx.ashley.allOf
 import ktx.ashley.get
@@ -41,13 +43,13 @@ class CollisionScoreSystem(
             val adjustDelay = 0
 
             val veryEarly = Vector2()
-            veryEarly.x = 13.6F
-            veryEarly.y = 14.1F
+            veryEarly.x = 13.5F
+            veryEarly.y = 14.0F
             val early = Vector2()
-            early.x = 14.1F
-            early.y = 14.4F
+            early.x = 14.0F
+            early.y = 14.34F
             val perfect = Vector2()
-            perfect.x = 14.4F
+            perfect.x = 14.34F
             perfect.y = 14.67F
             val late = Vector2()
             late.x = 14.67F
@@ -144,19 +146,19 @@ class CollisionScoreSystem(
             scoreCmp.s50count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 50 + (50 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak -= 1
+            scoreCmp.missStreak = MathUtils.clamp(scoreCmp.missStreak-1, 0, MISSES_ALLOWED)
         }
         if (howAccurateHit == 100) {
             scoreCmp.s100count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 100 + (100 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak -= 1
+            scoreCmp.missStreak = MathUtils.clamp(scoreCmp.missStreak-1, 0, MISSES_ALLOWED)
         }
         if (howAccurateHit == 300) {
             scoreCmp.s300count += 1
             scoreCmp.streak += 1
             scoreCmp.score += 300 + (300 * (scoreCmp.streak)/25) //add difficulty multiplier (based on speed and shiz)
-            scoreCmp.missStreak -= 1
+            scoreCmp.missStreak = MathUtils.clamp(scoreCmp.missStreak-1, 0, MISSES_ALLOWED)
         }
 
         if (scoreCmp.streak > scoreCmp.bestStreak){ //save best streak

@@ -47,7 +47,7 @@ class GameScreen(
 ) : GameEventListener, BeataktScreen(game) {
     private val ui = GameUi(assets[I18NBundleAsset.DEFAULT.descriptor])
 
-    /*
+
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/WestCoastZHU.bm")
@@ -55,7 +55,8 @@ class GameScreen(
             beatSongLoc = Gdx.files.external("Beatakt/Songs/WestCoastZHU.mp3")
             length = 260f
         }
-    }*/
+    }
+    /*
     private val score = engine.entity {
         with<ScoreComponent>{
             beatMapLoc = Gdx.files.external("Beatakt/OdeToCharles.bm")
@@ -63,7 +64,7 @@ class GameScreen(
             beatSongLoc = Gdx.files.external("Beatakt/Songs/OdeToCharles.mp3")
             length = 252f
         }
-    }
+    }*/
 
     /*
     private val score = engine.entity {
@@ -83,10 +84,9 @@ class GameScreen(
 
         log.debug { "Game BeataktScreen is Shown" }
 
-
-        //audioService.play(MusicAsset.WestCoast)
+        audioService.play(MusicAsset.WestCoast)
         //audioService.play(MusicAsset.Exodus)
-        audioService.play(MusicAsset.OdeToCharles)
+        //audioService.play(MusicAsset.OdeToCharles)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
@@ -127,7 +127,7 @@ class GameScreen(
             }
             with<PlayerComponent>()
             with<TransformCollisionComponent>{
-                setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.8f, (16f/(1920/270))*1.3f)
+                setInitBox(0f, HITBOX_HEIGHT, (9f/(1080/270))*0.8f, (16f/(1920/270))*1.8f)
             }
             with<ScoreComponent>()
             with<GraphicComponent>{id=SpriteIDs.PLAYER}
