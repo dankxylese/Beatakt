@@ -1,32 +1,78 @@
 package com.darkxylese.beatakt.assets
 
+import com.badlogic.gdx.assets.AssetDescriptor
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import ktx.assets.getAsset
 import ktx.assets.load
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.utils.I18NBundle
+import com.sun.org.apache.xpath.internal.operations.Bool
 
-// sounds
-enum class SoundAssets(val path: String) {
-    Hit("sounds/hit.wav")
+enum class TextureAsset(
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<Texture> = AssetDescriptor("$directory/$fileName", Texture::class.java)
+){
+    BACKGROUND1("background1.png"),
+    BACKGROUND2("background2.png")
 }
 
-inline fun AssetManager.load(asset: SoundAssets) = load<Sound>(asset.path)
-inline operator fun AssetManager.get(asset: SoundAssets) = getAsset<Sound>(asset.path)
-
-// music
-enum class MusicAssets(val path: String) {
-    Song("music/testaudio.mp3")
+enum class TextureAtlasAsset(
+        val isSkinAtlas: Boolean,
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<TextureAtlas> = AssetDescriptor("$directory/$fileName", TextureAtlas::class.java)
+){
+    GAME_GRAPHICS(false, "GameElements.atlas"),
+    UI(true, "ui.atlas")
 }
 
-inline fun AssetManager.load(asset: MusicAssets) = load<Music>(asset.path)
-inline operator fun AssetManager.get(asset: MusicAssets) = getAsset<Music>(asset.path)
-
-// texture atlas
-enum class TextureAtlasAssets(val path: String) {
-    Game("images/GameElements.atlas")
+enum class SoundAsset(
+        fileName: String,
+        directory: String = "sounds",
+        val descriptor: AssetDescriptor<Sound> = AssetDescriptor("$directory/$fileName", Sound::class.java)
+) {
+    HIT("hit.wav"),
+    FINISH("finish.wav"),
+    FAIL("fail.wav")
 }
 
-inline fun AssetManager.load(asset: TextureAtlasAssets) = load<TextureAtlas>(asset.path)
-inline operator fun AssetManager.get(asset: TextureAtlasAssets) = getAsset<TextureAtlas>(asset.path)
+enum class MusicAsset(
+        fileName: String,
+        directory: String = "music",
+        val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
+) {
+    STARTMUSIC("menu.mp3"),
+    WestCoast("WestCoastZHU.mp3"),
+    Exodus("Exodus.mp3"),
+    OdeToCharles("OdeToCharles.mp3")
+
+}
+
+enum class BitmapFontAsset(
+        fileName: String,
+        directory: String = "images",
+        val descriptor: AssetDescriptor<BitmapFont> = AssetDescriptor(
+                "$directory/$fileName",
+                BitmapFont::class.java,
+                BitmapFontLoader.BitmapFontParameter().apply {
+                    atlasName = TextureAtlasAsset.UI.descriptor.fileName
+                }
+        )
+){
+    FONT_LARGE_GRADIENT("font11_gradient.fnt"),
+    FONT_DEFAULT_GRADIENT("font8.fnt")
+}
+
+enum class I18NBundleAsset(
+        fileName: String,
+        directory: String = "i18n",
+        val descriptor: AssetDescriptor<I18NBundle> = AssetDescriptor("$directory/$fileName", I18NBundle::class.java)
+) {
+    DEFAULT("i18n")
+}

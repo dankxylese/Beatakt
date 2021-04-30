@@ -1,40 +1,68 @@
 package com.darkxylese.beatakt.ecs.system
 
-import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.systems.IntervalSystem
-import com.badlogic.gdx.assets.AssetManager
-import com.badlogic.gdx.math.MathUtils
-import com.darkxylese.beatakt.assets.TextureAtlasAssets
-import com.darkxylese.beatakt.assets.get
 import com.badlogic.ashley.core.Entity
+import com.badlogic.ashley.systems.IntervalSystem
+import com.badlogic.gdx.math.MathUtils
 import com.darkxylese.beatakt.ecs.component.*
-import ktx.ashley.*
+import com.darkxylese.beatakt.event.GameEventManager
+import com.darkxylese.beatakt.event.GameEventPlayer
+import com.darkxylese.beatakt.event.GameEventType
+import com.darkxylese.beatakt.screen.SPAWN_SPEED
+import ktx.ashley.entity
+import ktx.ashley.get
+import ktx.ashley.with
+import ktx.log.debug
+import ktx.log.logger
 
-class SpawnSystem(hitbox: Entity, assets: AssetManager) : IntervalSystem(MathUtils.random(0.5f, 0.9f)) { //1f = 1s TODO: Remove interval system, add map reading system, which will call spawn whenever its needed.
-    private val hitRegion = assets[TextureAtlasAssets.Game].findRegion("hit270")
-    private var createdTotal = 0
-    private val scoreCmp = hitbox[ScoreComponent.mapper]!! //top score thing TEMP
+private val log = logger<SpawnSystem>()
 
-    override fun addedToEngine(engine: Engine?) {
-        super.addedToEngine(engine)
-        // spawn an initial hit when the system is added to the engine
-        updateInterval()
-    }
+class SpawnSystem(
+        private val result: MutableList<Float>,
+        private val gameEventManager: GameEventManager,
+        playerHitbox : Entity,
+        inter: Float,
+        intervalCounterAhead: Int
+        ) : IntervalSystem(inter) {
+    var intervalCounter = 0+intervalCounterAhead //4s to account for speed
+    var createdTotal = 0
+    var finished = false
+    private val scoreCmp = playerHitbox[ScoreComponent.mapper]!! //top score thing TEMP
+
+
 
     override fun updateInterval() {
-        engine.entity {
-            with<RenderComponent> {
-                sprite.setRegion(hitRegion)
-                z = 2
+        val randPosX = MathUtils.random(0, 3) * 2.25f
+        if (intervalCounter < (result.size-1) && result[intervalCounter] > 0f) { //check (if statement) in this order or the result gets called out of bounds first
+            engine.entity {
+                with<TransformComponent> {
+                    setInitPos(randPosX, 16f, 0f)
+                    //bounds.set(randPosX, 16f, 9f/(1080/270), 16f/(1920/270))
+                }
+                with<CollisionComponent>()
+                with<GraphicComponent> { id = SpriteIDs.HIT }
+                with<HitMoveComponent> { speed = SPAWN_SPEED }
+                with<IdComponent>{id = createdTotal}
             }
-            with<TransformComponent> { bounds.set((MathUtils.random(0, 3))*270f, 1920f, 270f, 270f) } //spawns the random hit block
-            with<HitMoveComponent> { speed.set(0f, -1000f) } //speed of the hit
-            with<HitCollisionComponent>() //attach collision component to be able to click it
-            with<IdComponent> { id = createdTotal }
+            scoreCmp.currentObjects.add(createdTotal)
+            createdTotal+=1
         }
-        scoreCmp.currentObjects.add(createdTotal)
-        createdTotal+=1
+
+        if (intervalCounter > result.size && !finished){
+            gameEventManager.dispatchEvent(
+                GameEventType.ENDGAME,
+                GameEventPlayer.apply {
+                    this.hits = scoreCmp.hits
+                    this.s0count = scoreCmp.s0count
+                    this.s50count = scoreCmp.s50count
+                    this.s100count = scoreCmp.s100count
+                    this.s300count = scoreCmp.s300count
+                    this.score = scoreCmp.score
+                    this.bestStreak = scoreCmp.bestStreak
+                })
+            log.debug { "Dispatched ENDGAME Event" }
+            finished = true
+        }
+        intervalCounter++
+        //log.debug{intervalCounter.toString() }
     }
 }
-
-

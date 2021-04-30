@@ -1,90 +1,121 @@
 package com.darkxylese.beatakt.screen
 
-import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.PooledEngine
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.assets.AssetManager
-import com.darkxylese.beatakt.assets.MusicAssets
-import com.darkxylese.beatakt.assets.SoundAssets
-import com.darkxylese.beatakt.assets.TextureAtlasAssets
-import com.darkxylese.beatakt.assets.load
-import com.darkxylese.beatakt.ecs.system.MoveSystem
-import com.darkxylese.beatakt.ecs.system.PlayerInputSystem
-import com.darkxylese.beatakt.ecs.system.SpawnSystem
-import com.darkxylese.beatakt.event.GameEventManager
+import com.badlogic.gdx.scenes.scene2d.Action
+import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.utils.Align
+import com.darkxylese.beatakt.Beatakt
+import com.darkxylese.beatakt.assets.I18NBundleAsset
+import com.darkxylese.beatakt.assets.SoundAsset
+import com.darkxylese.beatakt.assets.TextureAsset
+import com.darkxylese.beatakt.assets.TextureAtlasAsset
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import ktx.app.KtxGame
-import ktx.app.KtxScreen
+import ktx.actors.plus
+import ktx.actors.plusAssign
 import ktx.async.KtxAsync
-import ktx.graphics.use
+import ktx.collections.gdxArrayOf
+import ktx.log.debug
+import ktx.log.logger
+import ktx.scene2d.actors
+import ktx.scene2d.image
+import ktx.scene2d.label
+import ktx.scene2d.stack
+import ktx.scene2d.table
 
+private val log = logger<LoadingScreen>()
 
+class LoadingScreen(game: Beatakt) : BeataktScreen(game) {
+    private lateinit var progressBar: Image
+    private lateinit var touchToBeginLabel: Label
 
-class LoadingScreen(private val game: KtxGame<KtxScreen>,
-                    private val batch: Batch,
-                    private val font: BitmapFont,
-                    private val assets: AssetManager,
-                    private val camera: OrthographicCamera,
-                    private val gameEventManager: GameEventManager,
-                    private val ecsEngine: PooledEngine) : KtxScreen {
 
     override fun show() {
-        MusicAssets.values().forEach { assets.load(it) } //TODO: [ALL] make Async
-        SoundAssets.values().forEach { assets.load(it) }
-        TextureAtlasAssets.values().forEach { assets.load(it) }
+        val old = System.currentTimeMillis()
+        log.debug { "Loading Screen is Shown" }
 
-        KtxAsync.launch {
-            initiateResources()
+        //queue asset loading
+        val assetRefs = gdxArrayOf( //asset manager that takes care of asset handling
+                TextureAsset.values().map { assets.loadAsync(it.descriptor)},
+                TextureAtlasAsset.values().map {assets.loadAsync(it.descriptor)},
+                SoundAsset.values().map {assets.loadAsync(it.descriptor)},
+                I18NBundleAsset.values().map { assets.loadAsync(it.descriptor) }
+        ).flatten() //flatten the entire list. Before we had an array, now we have a list = quicker access
+
+
+
+        // once loading finished change screens
+        KtxAsync.launch { //non blocking
+            assetRefs.joinAll()
+            //loading is done
+            //log.debug { "Time for loading assets : ${System.currentTimeMillis() - old} ms" }
+            assetsLoaded()
         }
+
+
+        setupUI()
     }
 
-    private fun initiateResources(){
-
-        ecsEngine.run{
-            addSystem(MoveSystem())
-            addSystem(PlayerInputSystem(gameEventManager, ecsEngine))
-        }
-
-        game.addScreen(
-                GameScreen(
-                        batch,
-                        font,
-                        assets,
-                        camera,
-                        ecsEngine,
-                        gameEventManager
-                )
-        )
+    override fun hide() {
+        stage.clear()
     }
+
+    private fun assetsLoaded(){
+        game.addScreen(GameScreen(game))
+        touchToBeginLabel += forever(sequence(fadeIn(0.5f) + fadeOut(0.5f)))
+    }
+
 
     override fun render(delta: Float) {
-        font.data.setScale(2.5f)
+        if(assets.progress.isFinished && Gdx.input.justTouched() && game.containsScreen<GameScreen>()){
+            game.setScreen<GameScreen>()
+            game.removeScreen<LoadingScreen>()
+            dispose() //remove loading screen
+        }
 
-        // continue loading our assets
-        assets.update()
+        progressBar.scaleX = assets.progress.percent
+        stage.run{
+            viewport.apply()
+            act()
+            draw()
+        }
 
-        camera.update()
-        batch.projectionMatrix = camera.combined
+    }
 
-        batch.use {
-            font.draw(it, "Welcome to Beatakt ", 100f, 150f)
+    private fun setupUI(){
+        stage.actors{
+            table {
+                defaults().fillX().expandX()
 
-            //TODO implement loading screen
-            if (assets.isFinished) {
-                font.draw(it, "Tap anywhere to begin!", 100f, 100f)
-            } else {
-                font.draw(it, "Loading assets...", 100f, 100f)
+                label("Beatact","gradient"){
+                    setWrap(true)
+                    setAlignment(Align.center)
+                }
+                row()
+
+                touchToBeginLabel = label("Touch to Begin","default"){
+                    setWrap(true)
+                    setAlignment(Align.center)
+                    color.a = 0f
+                }
+                row()
+
+                stack { cell ->
+                    progressBar = image("life_bar").apply{
+                        scaleX = 0f
+                    }
+                    label("Loading...", "default"){
+                        setAlignment(Align.center)
+                    }
+                    cell.padLeft(5f).padRight(5f)
+                }
+
+                setFillParent(true)
+                pack()
             }
         }
-
-
-        if (Gdx.input.isTouched && assets.isFinished) {
-            game.removeScreen<LoadingScreen>()
-            dispose()
-            game.setScreen<GameScreen>()
-        }
     }
+
 }

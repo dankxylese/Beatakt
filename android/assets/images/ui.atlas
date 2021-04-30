@@ -1,0 +1,36 @@
+
+ui.png
+size: 256, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+font11_gradient
+  rotate: false
+  xy: 2, 92
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+font8
+  rotate: false
+  xy: 2, 26
+  size: 128, 64
+  orig: 128, 64
+  offset: 0, 0
+  index: -1
+game_hud
+  rotate: false
+  xy: 2, 2
+  size: 126, 22
+  orig: 126, 22
+  offset: 0, 0
+  index: -1
+life_bar
+  rotate: false
+  xy: 132, 214
+  size: 22, 6
+  split: 2, 2, 2, 2
+  pad: 0, 0, 0, 0
+  orig: 22, 6
+  offset: 0, 0
+  index: -1
