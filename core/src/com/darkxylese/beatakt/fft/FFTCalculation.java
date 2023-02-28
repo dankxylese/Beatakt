@@ -20,7 +20,7 @@ public class FFTCalculation
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
-	public static final String FILE = "/home/manse/Beatakt/Songs/WestCoastZHU.mp3";
+	public static final String FILE = "/home/vbohe/Git/Beatakt/Songs/poobitsiai_meni.mp3";
 	public static final int HOP_SIZE = 512;
 	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
@@ -88,7 +88,7 @@ public class FFTCalculation
 
 	static public void outputFile(List<List<Float>> signalFluctuations, List<List<Float>> thresholds, int duration){
 		try{
-		RandomAccessFile stream = new RandomAccessFile("/home/manse/Beatakt/WestCoastZHU.bm", "rw");
+		RandomAccessFile stream = new RandomAccessFile("/home/vbohe/Git/Beatakt/BeatMaps/poobitsiai_meni.bm", "rw");
 		stream.setLength(0); //clear file before hand
 		FileChannel channel = stream.getChannel();
 		int k = 0;

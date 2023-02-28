@@ -1,17 +1,13 @@
 package com.darkxylese.beatakt.assets
 
 import com.badlogic.gdx.assets.AssetDescriptor
-import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.audio.Music
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import ktx.assets.getAsset
-import ktx.assets.load
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.I18NBundle
-import com.sun.org.apache.xpath.internal.operations.Bool
 
 enum class TextureAsset(
         fileName: String,
@@ -50,8 +46,8 @@ enum class MusicAsset(
     STARTMUSIC("menu.mp3"),
     WestCoast("WestCoastZHU.mp3"),
     Exodus("Exodus.mp3"),
+    Poobitsiai("poobitsiai_meni.mp3"),
     OdeToCharles("OdeToCharles.mp3")
-
 }
 
 enum class BitmapFontAsset(

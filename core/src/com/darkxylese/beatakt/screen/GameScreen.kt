@@ -39,7 +39,7 @@ const val BANDS_FILTER_STRENGHT = 0.2f //0.29
 const val BAND1_FILTER_POST_LIMIT = 20f //30
 const val BANDS23_FILTER_POST_LIMIT = 7f //10
 const val MISSES_ALLOWED = 8
-const val SCAN_RANGE = 25
+const val SCAN_RANGE = 50 //25 is our scan range - this can be increased or decreased to change difficulty - bake into settings file
 
 class GameScreen(
         game: Beatakt,
@@ -68,13 +68,12 @@ class GameScreen(
 
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Beatakt/Exodus.bm")
-            beatMapName = "Exodus"
-            beatSongLoc = Gdx.files.external("Beatakt/Songs/Exodus.mp3")
+            beatMapLoc = Gdx.files.external("Git/Beatakt/BeatMaps/OdeToCharles.bm") // Starts in /home/<user>/
+            beatMapName = "poobitsiai_meni"
+            beatSongLoc = Gdx.files.external("Git/Beatakt/Songs/poobitsiai_meni.mp3") // Starts in /home/<user>/
             length = 176f
         }
     }
-
 
     override fun show() {
         gameEventManager.addListener(GameEventType.PLAYER_DEATH, this)
@@ -84,8 +83,9 @@ class GameScreen(
         log.debug { "Game BeataktScreen is Shown" }
 
         //audioService.play(MusicAsset.WestCoast, 0.3f)
-        audioService.play(MusicAsset.Exodus, 0.5f)
-        //audioService.play(MusicAsset.OdeToCharles, 0.5f)
+        //audioService.play(MusicAsset.Exodus, 0.5f)
+        //audioService.play(MusicAsset.Poobitsiai, 0.5f)
+        audioService.play(MusicAsset.OdeToCharles, 0.5f)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
