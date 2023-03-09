@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Engine
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.files.FileHandle
-import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.darkxylese.beatakt.Beatakt
 import com.darkxylese.beatakt.assets.I18NBundleAsset
 import com.darkxylese.beatakt.assets.MusicAsset
@@ -25,7 +24,6 @@ import ktx.ashley.with
 import ktx.log.debug
 import ktx.log.logger
 import ktx.preferences.flush
-import ktx.preferences.get
 import ktx.preferences.set
 import java.lang.Float.min
 
@@ -35,7 +33,7 @@ private const val MAX_DELTA_TIME = 1/30f
 const val HITBOX_HEIGHT = 2f
 const val INPUT_TIMEOUT = 1.2f
 const val SPAWN_SPEED = 10f
-const val BANDS_FILTER_STRENGHT = 0.2f //0.29
+const val BANDS_FILTER_STRENGTH: Float = 0.2f //0.29
 const val BAND1_FILTER_POST_LIMIT = 20f //30
 const val BANDS23_FILTER_POST_LIMIT = 7f //10
 const val MISSES_ALLOWED = 8
@@ -68,10 +66,13 @@ class GameScreen(
 
     private val score = engine.entity {
         with<ScoreComponent>{
-            beatMapLoc = Gdx.files.external("Git/Beatakt/BeatMaps/OdeToCharles.bm") // Starts in /home/<user>/
-            beatMapName = "poobitsiai_meni"
-            beatSongLoc = Gdx.files.external("Git/Beatakt/Songs/poobitsiai_meni.mp3") // Starts in /home/<user>/
-            length = 176f
+//            beatMapLoc = Gdx.files.external("Git/Beatakt/BeatMaps/OdeToCharles.bm") // Starts in /home/<user>/
+            val file = Gdx.files.internal("testMaps/poobitsiai_meni.bm")
+            println(file.readString());
+            beatMapLoc = file
+//            beatMapName = "poobitsiai_meni"
+//            beatSongLoc = Gdx.files.external("Git/Beatakt/Songs/poobitsiai_meni.mp3") // Starts in /home/<user>/
+            length = 176f //TODO: Make this dinamic (seconds)
         }
     }
 
@@ -84,8 +85,8 @@ class GameScreen(
 
         //audioService.play(MusicAsset.WestCoast, 0.3f)
         //audioService.play(MusicAsset.Exodus, 0.5f)
-        //audioService.play(MusicAsset.Poobitsiai, 0.5f)
-        audioService.play(MusicAsset.OdeToCharles, 0.5f)
+        audioService.play(MusicAsset.Poobitsiai, 0.5f)
+//        audioService.play(MusicAsset.OdeToCharles, 0.5f)
 
         val playerHitbox = spawnPlayer()
         createGameElements()
@@ -96,7 +97,7 @@ class GameScreen(
             if (score != null) {
                 beatMapLocation = score.beatMapLoc
                 lenght = score.length
-                log.debug { "${preferences[score.beatMapName, 0f]}" }
+//                log.debug { "${preferences[score.beatMapName, 0f]}" }
             }
         }
 
@@ -280,7 +281,7 @@ class GameScreen(
             c1++
         }
 
-        minPower = (c3total / c3) * BANDS_FILTER_STRENGHT //filter output
+        minPower = (c3total / c3) * BANDS_FILTER_STRENGTH //filter output
 
         c1 = 0
         largest = 0.0f
@@ -345,7 +346,7 @@ class GameScreen(
             c1++
         }
 
-        minPower = (c3total / c3) * BANDS_FILTER_STRENGHT //filter output
+        minPower = (c3total / c3) * BANDS_FILTER_STRENGTH //filter output
 
         c1 = 0
         largest = 0.0f
@@ -409,7 +410,7 @@ class GameScreen(
             c1++
         }
 
-        minPower = (c3total / c3) * BANDS_FILTER_STRENGHT //filter output
+        minPower = (c3total / c3) * BANDS_FILTER_STRENGTH //filter output
 
         c1 = 0
         largest = 0.0f

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.utils.I18NBundle
+import org.w3c.dom.Text
 
 enum class TextureAsset(
         fileName: String,
@@ -48,6 +49,17 @@ enum class MusicAsset(
     Exodus("Exodus.mp3"),
     Poobitsiai("poobitsiai_meni.mp3"),
     OdeToCharles("OdeToCharles.mp3")
+}
+
+enum class BeatMapAsset(
+        fileName: String,
+        directory: String = "testMaps",
+        val descriptor: AssetDescriptor<Music> = AssetDescriptor("$directory/$fileName", Music::class.java)
+) {
+    WestCoast("WestCoastZHU.bm"),
+    Exodus("Exodus.bm"),
+    Poobitsiai("poobitsiai_meni.bm"),
+    OdeToCharles("OdeToCharles.bm")
 }
 
 enum class BitmapFontAsset(
