@@ -3,13 +3,10 @@ package com.darkxylese.beatakt.fft;
 import com.darkxylese.beatakt.fft.analysis.SpectrumProvider;
 import com.darkxylese.beatakt.fft.analysis.ThresholdFunction;
 import com.darkxylese.beatakt.fft.io.MP3Decoder;
-import com.darkxylese.beatakt.fft.visualization.PlaybackVisualizer;
-import com.darkxylese.beatakt.fft.visualization.Plot;
 
 
-import java.awt.Color;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -20,15 +17,16 @@ public class FFTCalculation
 {
 
 	// TODO: SpectralFlux -> SignalFluctuations
-	public static final String FILE = "/home/vbohe/Git/Beatakt/Songs/poobitsiai_meni.mp3";
+	public static final String FILE = "/home/vbohe/Git/Beatakt/android/assets/music/poobitsiai_meni.mp3";
 	public static final int HOP_SIZE = 512;
 	public static final int HISTORY_SIZE = 100;
 	public static final float[] multipliers = { 2f, 2f, 2f };
 	public static final float[] bands = { 80, 4000, 4000, 10000, 10000, 16000 };
 	
-	public static void main( String[] argv ) throws Exception
-	{		
-		MP3Decoder decoder = new MP3Decoder( new FileInputStream( FILE  ) );
+	public static String main(InputStream stream) throws Exception
+	{
+		//MP3Decoder decoder = new MP3Decoder( new FileInputStream( FILE  ) );
+		MP3Decoder decoder = new MP3Decoder(stream);
 		SpectrumProvider spectrumProvider = new SpectrumProvider( decoder, 1024, HOP_SIZE, true );
 		float[] spectrum = spectrumProvider.nextSpectrum();
 		float[] lastSpectrum = new float[spectrum.length];		
@@ -71,19 +69,43 @@ public class FFTCalculation
 		}
 
 		//write to file
-		outputFile(signalFluctuations, thresholds, decoder.getDuration());
+		return processOutput(signalFluctuations, thresholds, decoder.getDuration());
 
-
-		Plot plot = new Plot( "SignalFluctuations", 1024, 512 );
-		for( int i = 0; i < bands.length / 2; i++ )
-		{
-			plot.plot( signalFluctuations.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
-			plot.plot( thresholds.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, true, Color.green );
-		}
+		// DISPLAY PLOT
+//		Plot plot = new Plot( "SignalFluctuations", 1024, 512 );
+//		for( int i = 0; i < bands.length / 2; i++ )
+//		{
+//			plot.plot( signalFluctuations.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, false, Color.red );
+//			plot.plot( thresholds.get(i), 1, -0.6f * (bands.length / 2 - 2) + i, true, Color.green );
+//		}
 
 		//new PlaybackVisualizer( plot, HOP_SIZE, new MP3Decoder( new FileInputStream( FILE ) ) );
 
 
+	}
+
+	static public String processOutput(List<List<Float>> signalFluctuations, List<List<Float>> thresholds, int duration) {
+		StringBuilder processedOutputString = new StringBuilder();
+		try {
+			int k = 0;
+
+			for (int i = 0; i < bands.length; i += 2) { //for each band
+				for (int j = 0; j < signalFluctuations.get(i / 2).size(); j++) { //for each float point in a band
+					float pointVal = 0.00000f;
+					if ((signalFluctuations.get(i / 2).get(j) - thresholds.get(i / 2).get(j)) > 0.00001f) {
+						pointVal = (signalFluctuations.get(i / 2).get(j) - thresholds.get(i / 2).get(j));
+					}
+					String pointNormalised = (Math.round((pointVal) * 100000f) / 100000f + ",");
+					processedOutputString.append(pointNormalised);
+					k++;
+				}
+				processedOutputString.append(";");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return processedOutputString.toString();
 	}
 
 	static public void outputFile(List<List<Float>> signalFluctuations, List<List<Float>> thresholds, int duration){

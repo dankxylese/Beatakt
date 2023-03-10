@@ -10,16 +10,14 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioFileFormat;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioFormat;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioSystem;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.decoder.Bitstream;
 import javazoom.jl.decoder.Header;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileFormat;
-import javazoom.spi.mpeg.sampled.file.MpegAudioFormat;
 import javazoom.spi.mpeg.sampled.file.MpegEncoding;
 import javazoom.spi.mpeg.sampled.file.MpegFileFormatType;
 
@@ -39,7 +37,7 @@ public class MP3Decoder implements Decoder
 	{
 		InputStream in = new BufferedInputStream( stream, 1024*1024 );
 		this.in = new MP3AudioFileReader().getAudioInputStream( in );
-		AudioFormat baseFormat = this.in.getFormat();
+		javax.sound.sampled.AudioFormat baseFormat = this.in.getFormat();
 		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
 											baseFormat.getSampleRate(), 16,
 											baseFormat.getChannels(),
@@ -97,7 +95,7 @@ public class MP3Decoder implements Decoder
 	{
 		public static final int	INITAL_READ_LENGTH	= 128000;
 		private static final int MARK_LIMIT = INITAL_READ_LENGTH + 1;
-		private final AudioFormat.Encoding[][]	sm_aEncodings			= {
+		private final javax.sound.sampled.AudioFormat.Encoding[][] sm_aEncodings			= {
 				{ MpegEncoding.MPEG2L1, MpegEncoding.MPEG2L2, MpegEncoding.MPEG2L3 },
 				{ MpegEncoding.MPEG1L1, MpegEncoding.MPEG1L2, MpegEncoding.MPEG1L3 },
 				{ MpegEncoding.MPEG2DOT5L1, MpegEncoding.MPEG2DOT5L2,
@@ -110,7 +108,7 @@ public class MP3Decoder implements Decoder
 
 		@Override
 		protected AudioFileFormat getAudioFileFormat(InputStream inputStream, long mediaLength)
-		throws UnsupportedAudioFileException, IOException {
+		throws IOException {
 			HashMap<String, Object> aff_properties = new HashMap<>();
 			HashMap<String, java.io.Serializable> af_properties = new HashMap<String, java.io.Serializable>();
 			int mLength = (int)mediaLength;
@@ -123,32 +121,52 @@ public class MP3Decoder implements Decoder
 					&& (head[3] == 'F') && (head[8] == 'W') && (head[9] == 'A')
 					&& (head[10] == 'V') && (head[11] == 'E'))
 			{
-				throw new UnsupportedAudioFileException("WAV PCM stream found");				
+				try {
+					throw new UnsupportedAudioFileException("WAV PCM stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 
 			}
 			else if ((head[0] == '.') && (head[1] == 's') && (head[2] == 'n')
 					&& (head[3] == 'd'))
-			{			  
-				throw new UnsupportedAudioFileException("AU stream found");
+			{
+				try {
+					throw new UnsupportedAudioFileException("AU stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			else if ((head[0] == 'F') && (head[1] == 'O') && (head[2] == 'R')
 					&& (head[3] == 'M') && (head[8] == 'A') && (head[9] == 'I')
 					&& (head[10] == 'F') && (head[11] == 'F'))
-			{				
-				throw new UnsupportedAudioFileException("AIFF stream found");
+			{
+				try {
+					throw new UnsupportedAudioFileException("AIFF stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			else if (((head[0] == 'M') | (head[0] == 'm'))
 					&& ((head[1] == 'A') | (head[1] == 'a'))
 					&& ((head[2] == 'C') | (head[2] == 'c')))
-			{				
-				throw new UnsupportedAudioFileException("APE stream found");
+			{
+				try {
+					throw new UnsupportedAudioFileException("APE stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			else if (((head[0] == 'F') | (head[0] == 'f'))
 					&& ((head[1] == 'L') | (head[1] == 'l'))
 					&& ((head[2] == 'A') | (head[2] == 'a'))
 					&& ((head[3] == 'C') | (head[3] == 'c')))
-			{				
-				throw new UnsupportedAudioFileException("FLAC stream found");
+			{
+				try {
+					throw new UnsupportedAudioFileException("FLAC stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			// Shoutcast stream ?
 			else if (((head[0] == 'I') | (head[0] == 'i'))
@@ -162,8 +180,12 @@ public class MP3Decoder implements Decoder
 			else if (((head[0] == 'O') | (head[0] == 'o'))
 					&& ((head[1] == 'G') | (head[1] == 'g'))
 					&& ((head[2] == 'G') | (head[2] == 'g')))
-			{							
-				throw new UnsupportedAudioFileException("Ogg stream found");
+			{
+				try {
+					throw new UnsupportedAudioFileException("Ogg stream found");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			// No, so pushback.
 			else
@@ -183,7 +205,7 @@ public class MP3Decoder implements Decoder
 			int nHeader = AudioSystem.NOT_SPECIFIED;
 			int nTotalMS = AudioSystem.NOT_SPECIFIED;
 			boolean nVBR = false;
-			AudioFormat.Encoding encoding = null;
+			javax.sound.sampled.AudioFormat.Encoding encoding = null;
 			try
 			{
 				Bitstream m_bitstream = new Bitstream(pis);
@@ -252,26 +274,38 @@ public class MP3Decoder implements Decoder
 					TDebug.out(m_header.toString());
 			}
 			catch (Exception e)
-			{			
-				throw new UnsupportedAudioFileException("not a MPEG stream:"
-						+ e.getMessage());
+			{
+				try {
+					throw new UnsupportedAudioFileException("not a MPEG stream:"
+							+ e.getMessage());
+				} catch (UnsupportedAudioFileException ex) {
+					throw new RuntimeException(ex);
+				}
 			}
 			// Deeper checks ?
 			int cVersion = (nHeader >> 19) & 0x3;
 			if (cVersion == 1)
 			{
-				throw new UnsupportedAudioFileException(
-				"not a MPEG stream: wrong version");
+				try {
+					throw new UnsupportedAudioFileException(
+					"not a MPEG stream: wrong version");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 			int cSFIndex = (nHeader >> 10) & 0x3;
 			if (cSFIndex == 3)
 			{
 
-				throw new UnsupportedAudioFileException(
-				"not a MPEG stream: wrong sampling rate");
+				try {
+					throw new UnsupportedAudioFileException(
+					"not a MPEG stream: wrong sampling rate");
+				} catch (UnsupportedAudioFileException e) {
+					throw new RuntimeException(e);
+				}
 			}
 
-			AudioFormat format = new MpegAudioFormat(encoding, (float)nFrequency,
+			AudioFormat format = new AudioFormat(encoding, (float) nFrequency,
 					AudioSystem.NOT_SPECIFIED // SampleSizeInBits
 					// -
 					// The

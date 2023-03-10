@@ -2,10 +2,10 @@ package com.darkxylese.beatakt.fft.io;
 
 import java.io.FileInputStream;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFormat.Encoding;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.SourceDataLine;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioFormat;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioFormat.Encoding;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.AudioSystem;
+import mg.dida.javax.sound.share.classes.javax.sound.sampled.SourceDataLine;
 
 
 /**

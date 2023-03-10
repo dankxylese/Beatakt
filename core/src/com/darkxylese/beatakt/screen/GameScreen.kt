@@ -15,6 +15,7 @@ import com.darkxylese.beatakt.event.GameEvent
 import com.darkxylese.beatakt.event.GameEventListener
 import com.darkxylese.beatakt.event.GameEventPlayer
 import com.darkxylese.beatakt.event.GameEventType
+import com.darkxylese.beatakt.fft.FFTCalculation
 import com.darkxylese.beatakt.ui.GameUi
 import ktx.actors.plusAssign
 import ktx.ashley.entity
@@ -66,13 +67,21 @@ class GameScreen(
 
     private val score = engine.entity {
         with<ScoreComponent>{
+            val song = Gdx.files.internal("music/poobitsiai_meni.mp3")
+            //TODO
+            val beatMapString = FFTCalculation.main(song.read())
+            val beatMapFileHandle = Gdx.files.internal("testMaps/poobitsiai_meni1.bm")
+            beatMapFileHandle.writeString(beatMapString, false)
+
+
 //            beatMapLoc = Gdx.files.external("Git/Beatakt/BeatMaps/OdeToCharles.bm") // Starts in /home/<user>/
-            val file = Gdx.files.internal("testMaps/poobitsiai_meni.bm")
-            println(file.readString());
-            beatMapLoc = file
+            //TODO: Make this dynamic
+            val beatMap = Gdx.files.internal("testMaps/poobitsiai_meni1.bm")
+            println(beatMap.readString());
+            beatMapLoc = beatMap
 //            beatMapName = "poobitsiai_meni"
 //            beatSongLoc = Gdx.files.external("Git/Beatakt/Songs/poobitsiai_meni.mp3") // Starts in /home/<user>/
-            length = 176f //TODO: Make this dinamic (seconds)
+            length = 176f //TODO: Make this dynamic (seconds)
         }
     }
 
@@ -90,13 +99,13 @@ class GameScreen(
 
         val playerHitbox = spawnPlayer()
         createGameElements()
-        var lenght = 0f
+        var length = 0f
         var beatMapLocation: FileHandle? = null
 
         score[ScoreComponent.mapper].let { score ->
             if (score != null) {
                 beatMapLocation = score.beatMapLoc
-                lenght = score.length
+                length = score.length
 //                log.debug { "${preferences[score.beatMapName, 0f]}" }
             }
         }
@@ -105,7 +114,7 @@ class GameScreen(
         var resultBand4: MutableList<Float> = processFFT(beatMapLocation)
 
         engine.apply {
-            addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / lenght), ((16-3.5)/SPAWN_SPEED).toInt()))
+            addSystem(SpawnSystem(resultBand4, gameEventManager, playerHitbox, 1/(resultBand4.size / length), ((16-3.5)/SPAWN_SPEED).toInt()))
                                                                                         //16 units is the in world height, -2 is the placement of the hitbox (the =) and -1.125 is half of the hitbox )
             addSystem(CollisionScoreSystem(playerHitbox, audioService, gameEventManager))
             addSystem(ScoreSystem(game.gameEventManager))

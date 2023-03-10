@@ -71,16 +71,16 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        //implementation "com.googlecode.soundlibs:mp3spi:1.9.5.4"
-        //implementation "com.googlecode.soundlibs:jlayer:1.0.1.4"
-        //implementation "junit:junit:3.8.2"
-        //implementation "com.googlecode.soundlibs:tritonus-share:0.3.7.4"
+        implementation fileTree(dir: '../libs', include: '*.jar')
     }
 }
 
 project(":core") {
     apply plugin: "kotlin"
 
+    configurations {
+        compile.exclude module: 'javax'
+    }
 
     dependencies {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
@@ -101,5 +101,7 @@ project(":core") {
         api "io.github.libktx:ktx-style:$ktxVersion"
         api "io.github.libktx:ktx-scene2d:$ktxVersion"
         api "io.github.libktx:ktx-actors:$ktxVersion"
+
+        implementation fileTree(dir: '../libs', include: '*.jar')
     }
 }
