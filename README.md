@@ -1,7 +1,5 @@
-# Beatakt - Rhythm game using FFT to generate beat maps. Made with LibKtx
+A rhythm game similar to Guitar Hero where levels can be generated dynamically using a FFT algorithm for any song. Currently FFT part of the game is separate, with efforts being made to make this work on Android. Right now, FFT component cannot run on Android as Android lacks javax.sound in its implementation of Java. Effort is being made to have a workaround on a separate branch.
 
-Working build, as seen in my Thesis on it. May or may not continue working on it later. Currently there is a limitation to the algorithm, LibGtx uses its own javazoom, which is stripped off the components I need for it. A solution would be to include the FFT part on its own, then have the game call the .jar file with some args about the song position. It might not be worth it, and a separate algorithm might have to be used to make a "whole" game, but as it is its a good proof of concept that you can make such a game.
+Main branch has a working build of the game where music and the generated levels for them are built into the assets folder as a test/proof of concept. If FFT can be made to run on Android, music would be sourced from device storage instead, or later online streaming platform integration.
 
-To run, first run the fftCalculation in fft package, on its own to generate the map, and then point to it inside of the game. Don't forget to add the length. If it wasn't for javazoom, you would have gotten the location through scanning music with gdx.files.external recursive calls, which would forward the song location to the algorithm, and then the algorithm, using the MP3 decoder, would calculate the length of the song for you.
-
-[Video Demo of Game](video_demo.mp4)
+This was initially made for my final Uni project, and I am now reviving development in the hopes to complete this in the near future. [Video Demo of Game](video_demo.mp4)
